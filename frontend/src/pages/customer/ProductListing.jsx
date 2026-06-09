@@ -1,240 +1,207 @@
 import React, { useState } from 'react';
-import Navbar from './Navbar';
-import SearchBar from './SearchBar';
-import CategoryFilter from './CategoryFilter';
-import ProductCard from './ProductCard';
-import CarouselPagination from './CarouselPagination';
-import Footer from './Footer';
+
+// --- COMMON COMPONENTS ---
+import Navbar from '../../components/common/Navbar';
+import Footer from '../../components/common/Footer';
+import CarouselPagination from '../../components/common/Pagination';
+
+// --- PRODUCT COMPONENTS ---
+import SearchBar from '../../components/product/SearchBar';
+import CategoryFilter from '../../components/product/CategoryFilter';
+import ProductCard from '../../components/product/ProductCard';
 
 export default function ProductListing() {
-    // 1. Mobile Filter Drawer Toggle State
+    const [isDarkMode, setIsDarkMode] = useState(false);
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+    const [activeCategory, setActiveCategory] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
 
-    // 2. Active Filter States (Controlled state mapped to CategoryFilter instances)
-    const [selectedStorage, setSelectedStorage] = useState([]);
-    const [selectedDiscounts, setSelectedDiscounts] = useState([]);
-    const [selectedBrands, setSelectedBrands] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const itemsPerPage = 4;
 
-    // 3. Carousel Pagination State
-    const [currentPage, setCurrentPage] = useState(0); // 0-indexed page tracking
-    const itemsPerPage = 4; // Display 4 items per page/viewframe
-
-    // 4. Global Product Collection
     const allProducts = [
         {
             id: 1,
             brand: "The Style Story",
-            title: "Women Viscose Rayon Anarkali Kurta, Palazzo & Dupatta Set",
+            title: "Anarkali Kurta",
+            category: "Fashion",
+            description: "Women Viscose Rayon Anarkali Kurta, Palazzo & Premium Dupatta Set.",
             image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&auto=format&fit=crop&q=60",
             rating: 4.4,
             reviewCount: 1374,
             price: 898,
-            originalPrice: 3999,
-            offerText: "₹853 with Bank offer + more",
+            tag: "Best Seller"
         },
         {
             id: 2,
             brand: "Fastrack",
-            title: "Vyb Diva Analog Watch - For Women",
+            title: "Analog Watch",
+            category: "Electronics",
+            description: "Vyb Diva Premium Analog Wristwatch. Designed gracefully for modern women.",
             image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=500&auto=format&fit=crop&q=60",
             rating: 4.5,
             reviewCount: 314,
             price: 2046,
-            originalPrice: 2925,
-            offerText: "₹1,845 with Bank offer + more",
+            tag: "New Arrival"
         },
         {
             id: 3,
             brand: "Samsung",
-            title: "M06 5G (Blazing Black, 128 GB) | MediaTek Dimensity 6300",
+            title: "Galaxy M06 5G",
+            category: "Electronics",
+            description: "Blazing Black configuration featuring 128 GB & MediaTek Dimensity 6300 chipset.",
             image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&auto=format&fit=crop&q=60",
             rating: 4.1,
             reviewCount: 2355,
             price: 12580,
-            originalPrice: 14499,
-            offerText: "₹11,951 with Bank offer",
+            tag: "Trending"
         },
         {
             id: 4,
             brand: "Oumad",
-            title: "Floral Print Kurta, Palazzo & Dupatta Set",
+            title: "Floral Print Kurta",
+            category: "Fashion",
+            description: "Traditional refined handwoven Floral Print Kurta, crisp Palazzo & complete Dupatta Set.",
             image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500&auto=format&fit=crop&q=60",
             rating: 4.1,
             reviewCount: 23025,
             price: 583,
-            originalPrice: 2499,
-            offerText: "₹533 with Bank offer + more",
+            tag: "Top Rated"
         },
         {
             id: 5,
-            brand: "Puma",
-            title: "Smashic Unisex Leather Sneakers",
-            image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500&auto=format&fit=crop&q=60",
-            rating: 4.2,
-            reviewCount: 845,
-            price: 2499,
-            originalPrice: 4999,
-            offerText: "Minimum 50% Off",
+            brand: "Oxford",
+            title: "Classic History Atlas",
+            category: "Books",
+            description: "Detailed cartography maps, historical breakdowns, and educational global timelines.",
+            image: "https://images.unsplash.com/photo-1495640388908-05fa85288e61?w=500&auto=format&fit=crop&q=60",
+            rating: 4.6,
+            reviewCount: 182,
+            price: 450,
+            tag: "Education"
         },
         {
             id: 6,
-            brand: "Sony",
-            title: "WH-1000XM4 Wireless Over-Ear Active Noise Cancellation Headphones",
-            image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60",
-            rating: 4.7,
-            reviewCount: 9412,
-            price: 19990,
-            originalPrice: 29990,
-            offerText: "Bank Offer included",
+            brand: "Penguin",
+            title: "The Sci-Fi Odyssey",
+            category: "Books",
+            description: "A breathtaking epic space fictional novel following extra-galactic space travel frameworks.",
+            image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=500&auto=format&fit=crop&q=60",
+            rating: 4.8,
+            reviewCount: 942,
+            price: 299,
+            tag: "Fiction"
         }
     ];
 
-    // Mock data arrays fed directly into separate CategoryFilter blocks
-    const storageOptions = [
-        { id: 'st1', label: '256 GB' },
-        { id: 'st2', label: '128 GB' },
-        { id: 'st3', label: '64 GB' },
-    ];
+    const filteredProducts = allProducts.filter((product) => {
+        const matchesCategory = activeCategory === 'All' || product.category.toLowerCase() === activeCategory.toLowerCase();
+        const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            product.brand.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+    });
 
-    const discountOptions = [
-        { id: 'd1', label: '50% or more' },
-        { id: 'd2', label: '40% or more' },
-        { id: 'd3', label: '30% or more' },
-    ];
-
-    const brandOptions = [
-        { id: 'b1', label: 'Samsung' },
-        { id: 'b2', label: 'Fastrack' },
-        { id: 'b3', label: 'The Style Story' },
-    ];
-
-    // 5. Pagination Calculation Metrics
-    const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
     const startIndex = currentPage * itemsPerPage;
-    const visibleProducts = allProducts.slice(startIndex, startIndex + itemsPerPage);
+    const visibleProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
-    // Helper macro component to host filters (prevents repeating template markup between desktop and mobile sidebar drawers)
-    const RenderFilters = () => (
-        <div className="flex flex-col bg-white">
-            {/* Price Selector Block */}
-            <div className="p-4 border-b border-[#f0f0f0]">
-                <span className="text-[12px] font-semibold tracking-wider text-gray-400 block mb-3 uppercase">Price Range</span>
-                <div className="flex items-center gap-2">
-                    <select className="w-full h-8 px-2 border border-[#d7d7d7] rounded-sm bg-white text-gray-800 focus:outline-none text-[13px]">
-                        <option>Min</option>
-                        <option>₹10,000</option>
-                    </select>
-                    <span className="text-gray-400 text-xs">to</span>
-                    <select className="w-full h-8 px-2 border border-[#d7d7d7] rounded-sm bg-white text-gray-800 focus:outline-none text-[13px]">
-                        <option>₹30,000+</option>
-                    </select>
-                </div>
-            </div>
+    const handleCategoryChange = (newCategory) => {
+        setActiveCategory(newCategory);
+        setCurrentPage(0);
+    };
 
-            <CategoryFilter
-                title="Internal Storage"
-                options={storageOptions}
-                selectedValues={selectedStorage}
-                onChange={setSelectedStorage}
-            />
-            <CategoryFilter
-                title="Discount"
-                options={discountOptions}
-                selectedValues={selectedDiscounts}
-                onChange={setSelectedDiscounts}
-                defaultOpen={true}
-            />
-            <CategoryFilter
-                title="Brands"
-                options={brandOptions}
-                selectedValues={selectedBrands}
-                onChange={setSelectedBrands}
-            />
-        </div>
-    );
+    const handleSearchChange = (query) => {
+        setSearchQuery(query);
+        setCurrentPage(0);
+    };
 
     return (
-        <div className="min-h-screen bg-[#F1F3F6] flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+        <div className={`${isDarkMode ? 'dark' : ''} min-h-screen w-full bg-[var(--bg-main)] flex flex-col justify-between selection:bg-[var(--primary)] selection:text-[var(--text-on-primary)] transition-colors duration-300`}>
 
-            {/* --- HEADER WRAPPER TRACK --- */}
-            <header className="w-full bg-white flex flex-col gap-1 shadow-sm shrink-0">
-                <Navbar />
-                <div className="pb-4 max-w-7xl mx-auto w-full px-4">
-                    <SearchBar />
+            <header className="w-full bg-[var(--bg-surface)] flex flex-col gap-1 shadow-sm shrink-0 border-b border-[var(--border-light)] transition-colors duration-300">
+                <Navbar isDarkMode={isDarkMode} onToggleTheme={() => setIsDarkMode(!isDarkMode)} />
+                <div className="pb-4 w-full px-4 sm:px-6 lg:px-16">
+                    <SearchBar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
                 </div>
             </header>
 
-            {/* --- MAIN PAGE CONTENT GRID ASSEMBLY --- */}
-            <main className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 md:py-6 flex gap-4 flex-grow items-start">
+            <main className="w-full max-w-full px-4 sm:px-6 lg:px-16 py-6 flex gap-6 flex-grow items-start">
 
-                {/* DESKTOP FILTER BAR COLUMN (Hidden on viewports below 1024px) */}
-                <aside className="hidden lg:block w-[280px] bg-white border border-gray-200 rounded-sm shadow-sm shrink-0 sticky top-4">
-                    <div className="p-4 border-b border-[#f0f0f0]">
-                        <h2 className="text-[18px] font-medium tracking-tight text-[#212121]">Filters</h2>
-                    </div>
-                    <RenderFilters />
+                {/* DESKTOP SIDEBAR DEPARTMENTS RAIL */}
+                <aside className="hidden lg:block w-[280px] shrink-0 sticky top-4">
+                    <CategoryFilter activeCategory={activeCategory} onCategoryChange={handleCategoryChange} />
                 </aside>
 
-                {/* MAIN DISPLAY: PRODUCT COLLECTION BLOCK */}
-                <section className="flex-grow w-full flex flex-col justify-between min-h-[60vh]">
-                    <div className="bg-white p-4 border border-gray-200 rounded-sm shadow-sm">
+                {/* PRODUCT SHELF CONTAINER FEED */}
+                <section className="flex-grow flex flex-col justify-between min-h-[65vh] w-full">
+                    <div className="bg-[var(--bg-surface)] p-4 sm:p-6 border border-[var(--border-light)] rounded-xl shadow-sm w-full transition-colors duration-300">
 
-                        {/* Context/Results Title Line */}
-                        <div className="mb-4 pb-2 border-b border-gray-100 flex justify-between items-center">
+                        <div className="mb-6 pb-3 border-b border-[var(--border-light)] flex justify-between items-center gap-2">
                             <div>
-                                <h3 className="text-base font-bold text-[#212121]">Similar Products</h3>
-                                <p className="text-xs text-gray-400 mt-0.5 font-normal">Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, allProducts.length)} of {allProducts.length} items</p>
+                                <h3 className="text-sm sm:text-lg font-bold text-[var(--text-main)] tracking-tight">
+                                    {searchQuery ? `Search: "${searchQuery}"` : activeCategory === 'All' ? 'Similar Products' : `${activeCategory}`}
+                                </h3>
+                                <p className="text-[10px] sm:text-xs text-[var(--text-muted)] mt-0.5 font-normal">
+                                    Showing {filteredProducts.length > 0 ? startIndex + 1 : 0}-{Math.min(startIndex + itemsPerPage, filteredProducts.length)} of {filteredProducts.length} items
+                                </p>
                             </div>
 
-                            {/* Mobile Filter Action Button */}
+                            {/* 🌟 FIXED: Interactive Mobile Trigger bound explicitly to open your sliding drawer */}
                             <button
                                 onClick={() => setIsMobileFilterOpen(true)}
-                                className="lg:hidden px-4 py-1.5 border border-[#2874f0] text-[#2874f0] font-medium text-xs rounded hover:bg-blue-50 transition-colors"
+                                className="px-4 py-1.5 border border-[var(--primary)] text-[var(--primary)] font-medium text-xs rounded-full hover:bg-[var(--primary-muted)] focus:outline-none transition-all duration-150 shrink-0"
                             >
-                                Filters
+                                Departments
                             </button>
                         </div>
 
-                        {/* Core Product Shelf Grid (4 Columns Desktop / 2 Columns Tablet & Mobile) */}
-                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
-                            {visibleProducts.map((product) => (
-                                <ProductCard key={product.id} product={product} variant="ecommerce" />
-                            ))}
-                        </div>
+                        {/* 🌟 FIXED MOBILE CARD SHELF GRID (Set to 2 columns on mobile with optimized spacing) */}
+                        {visibleProducts.length > 0 ? (
+                            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+                                {visibleProducts.map((product) => (
+                                    <ProductCard key={product.id} product={product} variant="overlay" />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="w-full py-20 flex flex-col items-center justify-center text-center">
+                                <span className="text-xl mb-1">🔍</span>
+                                <h4 className="text-sm font-bold text-[var(--text-main)]">No matches found</h4>
+                            </div>
+                        )}
                     </div>
 
-                    {/* SYSTEM OVERLAY PAGINATION CONTROL TOOLBAR */}
-                    <div className="w-full mt-6 mb-2">
-                        <CarouselPagination
-                            totalPages={totalPages}
-                            currentPage={currentPage}
-                            onPageChange={setCurrentPage}
-                        />
-                    </div>
+                    {totalPages > 1 && (
+                        <div className="w-full mt-4">
+                            <CarouselPagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage} />
+                        </div>
+                    )}
                 </section>
             </main>
 
-            {/* --- MOBILE ACCORDION DRAWER OVERLAY --- */}
+            {/* --- 🌟 MOBILE ACCORDION RESPONSIVE DRAWER MODAL --- */}
             {isMobileFilterOpen && (
                 <div className="lg:hidden fixed inset-0 z-50 flex flex-col justify-end bg-black/60 animate-in fade-in duration-200">
-                    <div className="w-full max-h-[80vh] bg-white rounded-t-2xl overflow-y-auto flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300">
-                        <div className="sticky top-0 bg-white border-b border-[#f0f0f0] p-4 flex items-center justify-between z-10">
-                            <h2 className="text-[16px] font-medium text-[#212121]">Filters</h2>
+                    <div className="w-full bg-[var(--bg-surface)] rounded-t-[2rem] overflow-hidden flex flex-col shadow-2xl border-t border-[var(--border-light)] animate-in slide-in-from-bottom duration-300">
+                        <div className="bg-[var(--bg-surface)] border-b border-[var(--border-light)] p-4 flex items-center justify-between z-10">
+                            <h2 className="text-[15px] font-bold text-[var(--text-main)] uppercase tracking-wide"></h2>
                             <button
                                 onClick={() => setIsMobileFilterOpen(false)}
-                                className="text-xs text-[#2874f0] font-bold tracking-wide px-3 py-1 bg-blue-50 rounded-full"
+                                className="text-xs text-[var(--text-on-primary)] bg-[var(--primary)] font-bold tracking-wide px-4 py-2 rounded-full focus:outline-none shadow-sm active:scale-95 transition-transform"
                             >
-                                Done
+                                Close
                             </button>
                         </div>
-                        <div className="pb-10">
-                            <RenderFilters />
+                        <div className="p-4 pb-10 max-h-[60vh] overflow-y-auto">
+                            {/* Category items embedded inside the modal click path */}
+                            <CategoryFilter
+                                activeCategory={activeCategory}
+                                onCategoryChange={(cat) => { handleCategoryChange(cat); setIsMobileFilterOpen(false); }}
+                            />
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* --- FOOTER ATTACHMENT NODE --- */}
             <Footer />
         </div>
     );

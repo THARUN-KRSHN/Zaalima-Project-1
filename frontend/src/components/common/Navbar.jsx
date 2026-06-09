@@ -1,91 +1,118 @@
 import React, { useState } from 'react';
-import { Sparkles, Moon, Menu, X } from 'lucide-react';
+import { Sparkles, Moon, Sun, Menu, X, ArrowUpRight, ShoppingCart } from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({ isDarkMode, onToggleTheme }) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <nav className="w-full max-w-7xl mx-auto px-4 py-4 font-sans select-none">
-            {/* Container with background color matching the reference tone */}
-            <div className="relative z-50 flex flex-col gap-3">
+        <nav className="w-full px-4 pt-6 pb-2 select-none font-sans z-50 relative">
+            <div className="flex flex-col gap-3 w-full items-center">
 
-                {/* Main Navbar Pill */}
-                <div className="w-full h-20 bg-[#FAF8F5] border border-[#F0EDE8] rounded-full px-6 md:px-8 flex items-center justify-between shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
+                {/* ==========================================
+                    MAIN NAVBAR PILL (Rebranded to Zmarket Routing)
+                    ========================================== */}
+                <div className="w-full md:w-auto md:min-w-[760px] lg:min-w-[840px] h-16 bg-[var(--bg-surface)]/90 backdrop-blur-md border border-[var(--border-light)] rounded-full px-6 flex items-center justify-between shadow-[var(--shadow-sm)] transition-all duration-300">
 
                     {/* Logo Section */}
-                    <div className="flex items-center gap-3 cursor-pointer group">
-                        <div className="w-10 h-10 rounded-full bg-[#262320] flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
-                            <Sparkles className="w-5 h-5 fill-current" />
+                    <div className="flex items-center gap-2.5 cursor-pointer group shrink-0">
+                        <div className="w-9 h-9 rounded-full bg-[var(--primary)] flex items-center justify-center text-[var(--text-on-primary)] transition-transform duration-300 group-hover:scale-105 shadow-sm">
+                            <Sparkles className="w-4.5 h-4.5 fill-current" />
                         </div>
-                        <span className="text-xl text-[#262320] font-medium tracking-tight">
-                            Resume<span className="italic font-normal font-serif">IQ</span>
+                        <span className="text-[17px] text-[var(--text-main)] font-semibold tracking-tight">
+                            Z<span className="italic font-normal font-serif ml-0.5 text-[var(--primary)]">market</span>
                         </span>
                     </div>
 
-                    {/* Desktop Navigation Links */}
-                    <div className="hidden md:flex items-center gap-8 text-[#6B6661] text-[15px] font-medium">
-                        <a href="#features" className="hover:text-[#262320] transition-colors">Features</a>
-                        <a href="#how-it-works" className="hover:text-[#262320] transition-colors">How It Works</a>
-                        <a href="#pricing" className="hover:text-[#262320] transition-colors">Pricing</a>
+                    {/* Desktop System Context Links */}
+                    <div className="hidden md:flex items-center gap-7 text-[var(--text-muted)] text-[14px] font-medium pl-4">
+                        <a href="#products" className="hover:text-[var(--primary)] transition-colors duration-150">Products</a>
+                        <a href="#orders" className="hover:text-[var(--primary)] transition-colors duration-150">My Orders</a>
+                        <a href="#vendor" className="hover:text-[var(--primary)] transition-colors duration-150">Vendor Portal</a>
                     </div>
 
-                    {/* Desktop Action Buttons */}
-                    <div className="hidden md:flex items-center gap-6">
-                        <button className="text-[#262320] hover:scale-105 transition-transform" aria-label="Toggle dark mode">
-                            <Moon className="w-5 h-5" />
+                    {/* Desktop Action Handles */}
+                    <div className="hidden md:flex items-center gap-5 shrink-0">
+                        {/* Interactive dynamic Sun/Moon Icon toggle framework */}
+                        <button
+                            onClick={onToggleTheme}
+                            className="text-[var(--text-main)] hover:text-[var(--primary)] transition-colors p-1 focus:outline-none"
+                            aria-label="Toggle layout theme"
+                        >
+                            {isDarkMode ? (
+                                <Sun className="w-[18px] h-[18px] stroke-[1.75] text-amber-500 fill-amber-500 animate-in spin-in-12 duration-200" />
+                            ) : (
+                                <Moon className="w-[18px] h-[18px] stroke-[1.75]" />
+                            )}
                         </button>
-                        <a href="#login" className="text-[#6B6661] text-[15px] font-medium hover:text-[#262320] transition-colors">
+
+                        <a href="#login" className="text-[var(--text-muted)] text-[14px] font-medium hover:text-[var(--text-main)] transition-colors duration-150">
                             Log in
                         </a>
+
                         <a
-                            href="#join"
-                            className="bg-[#262320] text-[#FAF8F5] px-6 py-3 rounded-full text-[15px] font-medium shadow-[0_10px_20px_rgba(38,35,32,0.2)] hover:bg-[#383430] transition-all hover:translate-y-[-1px]"
+                            href="#cart"
+                            className="bg-[var(--primary)] text-[var(--text-on-primary)] px-5 py-2.5 rounded-full text-[13px] font-medium shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] transition-all duration-150 active:scale-[0.98] flex items-center gap-2"
                         >
-                            Join Now
+                            <ShoppingCart className="w-3.5 h-3.5" />
+                            <span>Cart</span>
                         </a>
                     </div>
 
-                    {/* Mobile Toggle Button */}
+                    {/* Mobile View Toggle Trigger */}
                     <div className="md:hidden flex items-center">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="text-[#262320] p-1 focus:outline-none"
+                            className="text-[var(--text-main)] p-1 focus:outline-none transition-transform active:scale-95"
                             aria-label="Toggle menu"
                         >
-                            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                            {isOpen ? <X className="w-5 h-5 stroke-[2]" /> : <Menu className="w-5 h-5 stroke-[2]" />}
                         </button>
                     </div>
                 </div>
 
-                {/* Mobile Dropdown Menu Card */}
+                {/* ==========================================
+                    MOBILE DROPDOWN DRAWER MODAL
+                    ========================================== */}
                 {isOpen && (
-                    <div className="md:hidden w-full bg-[#FAF8F5] border border-[#F0EDE8] rounded-[2rem] p-6 flex flex-col items-center gap-6 shadow-[0_20px_40px_rgba(0,0,0,0.08)] animate-in fade-in slide-in-from-top-4 duration-200">
+                    <div className="md:hidden w-full max-w-[calc(100vw-2rem)] bg-[var(--bg-surface)] border border-[var(--border-light)] rounded-[2rem] p-5 flex flex-col items-center gap-5 shadow-[var(--shadow-md)] animate-in fade-in slide-in-from-top-3 duration-200 z-50">
 
-                        {/* Dark Mode Row */}
-                        <div className="w-full flex justify-start px-2">
-                            <button className="flex items-center gap-3 text-[#262320] font-medium text-base py-2">
-                                <Moon className="w-5 h-5" />
-                                <span>Dark Mode</span>
+                        {/* Interactive Mobile Theme Toggler Row */}
+                        <div className="w-full flex justify-start border-b border-[var(--border-light)] pb-2">
+                            <button
+                                onClick={() => { onToggleTheme(); setIsOpen(false); }}
+                                className="flex items-center gap-3 text-[var(--text-main)] font-medium text-[15px] py-1 focus:outline-none"
+                            >
+                                {isDarkMode ? (
+                                    <>
+                                        <Sun className="w-4.5 h-4.5 text-amber-500 fill-amber-500" />
+                                        <span>Light Mode</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Moon className="w-4.5 h-4.5 text-[var(--text-muted)]" />
+                                        <span>Dark Mode</span>
+                                    </>
+                                )}
                             </button>
                         </div>
 
-                        {/* Nav Menu Links */}
-                        <div className="flex flex-col items-center gap-5 text-base font-medium text-[#262320] w-full mt-2">
-                            <a href="#login" onClick={() => setIsOpen(false)} className="hover:opacity-70 transition-opacity">
+                        <div className="flex flex-col items-center gap-4 text-[15px] font-medium text-[var(--text-main)] w-full">
+                            <a href="#products" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] transition-colors">Products</a>
+                            <a href="#orders" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] transition-colors">My Orders</a>
+                            <a href="#vendor" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] transition-colors">Vendor Portal</a>
+                            <a href="#login" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] border-t border-[var(--border-light)] w-full text-center pt-3 transition-colors">
                                 Log in
-                            </a>
-                            <a href="#pricing" onClick={() => setIsOpen(false)} className="hover:opacity-70 transition-opacity">
-                                Pricing
                             </a>
                         </div>
 
-                        {/* Primary Action Button */}
                         <a
-                            href="#get-started"
+                            href="#cart"
                             onClick={() => setIsOpen(false)}
-                            className="w-full bg-[#262320] text-[#FAF8F5] py-4 rounded-2xl text-center font-medium shadow-[0_12px_24px_rgba(38,35,32,0.25)] hover:bg-[#383430] transition-colors"
+                            className="w-full bg-[var(--primary)] text-[var(--text-on-primary)] py-3.5 rounded-xl text-center font-medium text-[14px] shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] transition-colors flex items-center justify-center gap-2"
                         >
-                            Get Started
+                            <ShoppingCart className="w-4 h-4" />
+                            <span>View Shopping Cart</span>
+                            <ArrowUpRight className="w-4 h-4 opacity-60" />
                         </a>
                     </div>
                 )}

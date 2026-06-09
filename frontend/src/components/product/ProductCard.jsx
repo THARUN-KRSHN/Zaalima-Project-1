@@ -1,11 +1,10 @@
 import React from 'react';
-import { Star, ShoppingCart } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 export default function ProductCard({ product, variant = 'ecommerce' }) {
     const {
         title,
         brand,
-        description,
         image,
         rating,
         reviewCount,
@@ -15,102 +14,75 @@ export default function ProductCard({ product, variant = 'ecommerce' }) {
         tag,
     } = product;
 
-    // --- STYLE VARIANT A: CAFÉ OVERLAY DESIGN ---
+    // --- STYLE VARIANT A: ZMARKET SIGNATURE CARD ---
     if (variant === 'overlay') {
         return (
-            <div className="relative aspect-[4/5] w-full rounded-[2.5rem] overflow-hidden group shadow-md select-none bg-stone-900">
-                {/* Background Image with Ambient Gradient Overlay */}
+            <div className="relative aspect-[4/5] w-full rounded-[1.25rem] sm:rounded-[2rem] overflow-hidden group shadow-[0_4px_12px_rgba(0,0,0,0.05)] select-none bg-[#1C1816]">
+
+                {/* Immersive Visual Asset Canvas */}
                 <img
                     src={image}
                     alt={title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-102"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10" />
 
-                {/* Top Floating Badge */}
+                {/* Vignette Layer to anchor text contrast across backgrounds */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent z-0" />
+
+                {/* Absolute Corner Isolated Tag Node */}
                 {tag && (
-                    <span className="absolute top-5 left-5 bg-[#A62626] text-[#FAF8F5] text-[11px] font-bold tracking-wider uppercase px-3 py-1.5 rounded-full">
-                        {tag}
-                    </span>
+                    <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 z-20">
+                        <span className="bg-[var(--primary)] text-[var(--text-on-primary)] text-[8px] sm:text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 sm:py-1 rounded-md shadow-md block">
+                            {tag}
+                        </span>
+                    </div>
                 )}
 
-                {/* Content Area (Bottom Aligned) */}
-                <div className="absolute inset-x-0 bottom-0 p-6 flex flex-col gap-4 text-white">
-                    <div>
-                        <h3 className="text-3xl font-medium tracking-tight font-serif mb-1 drop-shadow-sm">
-                            {title}
-                        </h3>
-                        {description && (
-                            <p className="text-[13px] text-stone-300 font-normal leading-snug max-w-[85%]">
-                                {description}
-                            </p>
-                        )}
+                {/* Dynamic Content Panel Metadata Box */}
+                <div className="absolute inset-x-0 bottom-0 p-3 sm:p-5 flex flex-col justify-end min-h-[40%] z-10 text-left">
+
+                    {/* Clamped Product Title Heading */}
+                    <h3 className="text-xs sm:text-base md:text-xl font-medium tracking-tight font-serif text-[#FCFAF7] line-clamp-1 sm:line-clamp-2 leading-tight drop-shadow-sm mb-0.5 sm:mb-1">
+                        {title}
+                    </h3>
+
+                    {/* Highly Visible Financial Price Line */}
+                    <div className="text-sm sm:text-xl font-semibold text-[#ffffff] font-sans tracking-wide mb-1.5 sm:mb-3">
+                        ₹{price?.toLocaleString()}
                     </div>
 
-                    {/* Price Layout */}
-                    <div className="text-2xl font-medium text-[#C93B3B] font-sans flex items-center">
-                        ₹{price}
+                    {/* Action Link Control Hub Wrapper */}
+                    <div className="w-full pt-1 sm:pt-2 border-t border-white/5 flex justify-end">
+                        <button className="text-[9px] sm:text-xs font-medium text-stone-300 hover:text-white transition-colors flex items-center gap-0.5 sm:gap-1 group/btn bg-white/5 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/10 hover:bg-white/10">
+                            <span>Details</span>
+                            <span className="transition-transform duration-200 group-hover/btn:translate-x-0.5">→</span>
+                        </button>
                     </div>
-
-                    {/* Semi-transparent Glassmorphism Button */}
-                    <button className="w-full bg-white/15 backdrop-blur-md border border-white/20 text-white py-3.5 rounded-2xl font-medium text-sm tracking-wide hover:bg-white/25 active:scale-[0.99] transition-all duration-150">
-                        Add to Cart
-                    </button>
                 </div>
             </div>
         );
     }
 
-    // --- STYLE VARIANT B: CLASSIC E-COMMERCE GRID DESIGN ---
+    // --- STYLE VARIANT B: COMPACT BACKUP STACK ---
     return (
-        <div className="bg-white rounded-md border border-gray-100 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-shadow duration-200 flex flex-col h-full group cursor-pointer select-none">
-            {/* Product Image Box */}
-            <div className="relative aspect-[4/5] w-full bg-[#f9f9f9] overflow-hidden rounded-t-md p-2 flex items-center justify-center">
+        <div className="bg-[var(--bg-surface)] rounded-md border border-[var(--border-light)] hover:shadow-[var(--shadow-md)] transition-all duration-200 flex flex-col h-full group cursor-pointer select-none">
+            <div className="relative aspect-[4/5] w-full bg-[var(--bg-surface-hover)] overflow-hidden rounded-t-md p-2 flex items-center justify-center">
                 <img
                     src={image}
                     alt={title}
-                    className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.02]"
+                    className="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal transition-transform duration-300 group-hover:scale-[1.02]"
                 />
-
-                {/* Rating Floating Tag */}
-                {rating && (
-                    <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm border border-gray-200 px-1.5 py-0.5 rounded flex items-center gap-0.5 shadow-sm">
-                        <span className="text-[11px] font-bold text-[#212121]">{rating}</span>
-                        <Star className="w-3 h-3 text-green-600 fill-green-600" />
-                        <span className="text-[10px] text-gray-400 font-normal border-l border-gray-300 pl-1 ml-0.5">
-                            ({reviewCount?.toLocaleString()})
-                        </span>
-                    </div>
-                )}
             </div>
 
-            {/* Meta Content Area */}
             <div className="p-3 flex flex-col flex-grow gap-1 text-left">
-                <div>
-                    <h4 className="text-[13px] text-[#212121] font-semibold tracking-tight truncate">
-                        {brand}
-                    </h4>
-                    <p className="text-[12px] text-gray-500 font-normal line-clamp-2 leading-normal mt-0.5">
-                        {title}
-                    </p>
-                </div>
-
-                {/* Price & Discounts Line */}
-                <div className="mt-auto pt-2 flex flex-col gap-0.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                        <span className="text-[14px] font-semibold text-[#212121]">₹{price?.toLocaleString()}</span>
-                        {originalPrice && (
-                            <span className="text-[12px] text-gray-400 line-through font-normal">
-                                ₹{originalPrice?.toLocaleString()}
-                            </span>
-                        )}
-                    </div>
-
-                    {offerText && (
-                        <span className="text-[11px] text-[#2874f0] font-medium tracking-tight">
-                            {offerText}
-                        </span>
-                    )}
+                <h4 className="text-[13px] text-[var(--text-main)] font-semibold tracking-tight truncate">
+                    {brand}
+                </h4>
+                <p className="text-[12px] text-[var(--text-muted)] font-normal line-clamp-2 leading-normal mt-0.5">
+                    {title}
+                </p>
+                <div className="mt-auto pt-2 flex items-baseline gap-1.5 flex-wrap">
+                    <span className="text-[14px] font-semibold text-[var(--text-main)]">₹{price?.toLocaleString()}</span>
                 </div>
             </div>
         </div>
