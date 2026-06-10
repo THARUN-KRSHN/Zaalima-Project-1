@@ -1,5 +1,5 @@
 import React from 'react';
-// Import the data
+import { useParams } from 'react-router-dom'; // 1. Import useParams
 import { product } from '../../data/productDetails';
 
 import Navbar from '../../components/layout/Navbar';
@@ -11,7 +11,8 @@ import VendorInfo from '../../components/product/VendorInfo';
 import SimilarProducts from '../../components/product/SimilarProducts';
 
 export default function ProductDetails() {
-    // Now using the imported 'product' constant directly
+    const { id } = useParams(); // 2. Extract ID from URL
+
     return (
         <div className="min-h-screen flex flex-col">
             <Navbar />
@@ -22,7 +23,6 @@ export default function ProductDetails() {
                 </nav>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
-                    {/* Passing images to gallery if needed */}
                     <ProductGallery images={product.images} />
 
                     <div className="flex flex-col gap-6">
