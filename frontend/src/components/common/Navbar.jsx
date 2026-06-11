@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Sparkles, Moon, Sun, Menu, X, ArrowUpRight, ShoppingCart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar({ isDarkMode, onToggleTheme }) {
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
     return (
         <nav className="w-full px-4 pt-6 pb-2 select-none font-sans z-50 relative">
@@ -14,7 +16,7 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                 <div className="w-full md:w-auto md:min-w-[760px] lg:min-w-[840px] h-16 bg-[var(--bg-surface)]/90 backdrop-blur-md border border-[var(--border-light)] rounded-full px-6 flex items-center justify-between shadow-[var(--shadow-sm)] transition-all duration-300">
 
                     {/* Logo Section */}
-                    <div className="flex items-center gap-2.5 cursor-pointer group shrink-0">
+                    <div onClick={() => navigate('/')} className="flex items-center gap-2.5 cursor-pointer group shrink-0">
                         <div className="w-9 h-9 rounded-full bg-[var(--primary)] flex items-center justify-center text-[var(--text-on-primary)] transition-transform duration-300 group-hover:scale-105 shadow-sm">
                             <Sparkles className="w-4.5 h-4.5 fill-current" />
                         </div>
@@ -25,7 +27,7 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
 
                     {/* Desktop System Context Links */}
                     <div className="hidden md:flex items-center gap-7 text-[var(--text-muted)] text-[14px] font-medium pl-4">
-                        <a href="#products" className="hover:text-[var(--primary)] transition-colors duration-150">Products</a>
+                        <button onClick={() => navigate('/products')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none">Products</button>
                         <a href="#orders" className="hover:text-[var(--primary)] transition-colors duration-150">My Orders</a>
                         <a href="#vendor" className="hover:text-[var(--primary)] transition-colors duration-150">Vendor Portal</a>
                     </div>
@@ -97,7 +99,7 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                         </div>
 
                         <div className="flex flex-col items-center gap-4 text-[15px] font-medium text-[var(--text-main)] w-full">
-                            <a href="#products" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] transition-colors">Products</a>
+                            <button onClick={() => { navigate('/products'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none">Products</button>
                             <a href="#orders" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] transition-colors">My Orders</a>
                             <a href="#vendor" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] transition-colors">Vendor Portal</a>
                             <a href="#login" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] border-t border-[var(--border-light)] w-full text-center pt-3 transition-colors">

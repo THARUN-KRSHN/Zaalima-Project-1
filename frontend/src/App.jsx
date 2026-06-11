@@ -7,7 +7,7 @@ import "./App.css";
 function App() {
   return (
     <Router>
-      <div className="w-full min-h-screen m-0 p-0 overflow-x-hidden bg-[var(--bg-main)] text-[var(--text-main)] transition-colors duration-300">
+      <div className="w-full min-h-screen m-0 p-0 overflow-x-clip bg-[var(--bg-main)] text-[var(--text-main)] transition-colors duration-300">
         <Routes>
           {/* Main Product Listing Route */}
           <Route path="/" element={<ProductListing />} />
