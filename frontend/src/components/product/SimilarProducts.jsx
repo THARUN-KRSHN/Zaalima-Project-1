@@ -2,7 +2,6 @@ import React from 'react';
 import ProductCard from './ProductCard';
 
 export default function SimilarProducts({ products = [] }) {
-    // Complete dummy array data sync structured exactly to replicate your list cards
     const fallbackProducts = [
         {
             id: 101,
@@ -40,19 +39,27 @@ export default function SimilarProducts({ products = [] }) {
     const visibleProducts = products.length > 0 ? products : fallbackProducts;
 
     return (
-        <div className="w-full border-t border-[var(--border-light)] pt-10 mt-10 transition-colors duration-300">
-            {/* Header section */}
-            <div className="mb-6 text-left">
+        <div className="w-full border-t border-[var(--border-light)] pt-8 mt-6 transition-colors duration-300">
+            {/* Header Content Section */}
+            <div className="mb-5 text-left">
                 <h2 className="text-xl sm:text-2xl font-bold text-[var(--text-main)] tracking-tight">
                     Similar Products
                 </h2>
                 <p className="text-xs text-[var(--text-muted)] mt-0.5">Explore corresponding items cataloged in this department slot</p>
             </div>
 
-            {/* Mobile 2-card multi-viewport collection grid shelf tracker */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 w-full">
+            {/* 🌟 FOOLPROOF TOUCH SWIPE FIX FOR TABLETS & PHONES:
+                - Added 'max-lg:overflow-x-auto max-lg:overflow-y-hidden' to bypass parent clip contexts
+                - Kept 'flex max-lg:flex-nowrap' so items form a single row track
+                - Included webkit-overflow-scrolling indicators natively */}
+            <div className="flex max-lg:flex-nowrap max-lg:overflow-x-auto max-lg:overflow-y-hidden lg:grid lg:grid-cols-4 gap-4 sm:gap-6 w-full overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 scrollbar-none snap-x snap-mandatory px-0.5 [-webkit-overflow-scrolling:touch]">
                 {visibleProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} variant="overlay" />
+                    <div
+                        key={product.id}
+                        className="shrink-0 w-[80%] sm:w-[46%] md:w-[42%] lg:w-full snap-start"
+                    >
+                        <ProductCard product={product} variant="overlay" />
+                    </div>
                 ))}
             </div>
         </div>
