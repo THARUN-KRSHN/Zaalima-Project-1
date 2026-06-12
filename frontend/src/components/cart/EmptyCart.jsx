@@ -6,9 +6,9 @@ export default function EmptyCart({ onContinueShopping }) {
         <div className="w-full py-16 px-4 flex flex-col items-center justify-center text-center select-none animate-in fade-in duration-300">
 
             {/* Minimal Ambient Vector Placeholder Composition */}
-            <div className="relative w-28 h-28 sm:w-36 sm:h-36 bg-[var(--primary-muted)] rounded-full flex items-center justify-center mb-6 shadow-inner text-[var(--primary)] animate-bounce duration-1000">
+            <div className="relative w-28 h-28 sm:w-36 sm:h-36 bg-[var(--primary-muted)] rounded-full flex items-center justify-center mb-6 shadow-inner text-[var(--primary)] ">
                 <ShoppingBag className="w-12 h-12 sm:w-16 sm:h-16 stroke-[1.25]" />
-                <div className="absolute top-4 right-4 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-[var(--bg-main)]" />
+
             </div>
 
             {/* Typographic Context */}
