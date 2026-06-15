@@ -60,7 +60,7 @@ export default function Checkout() {
 
         console.log("Validation Passed! Packaging Payload Data:", { addressData, paymentMethod, checkoutCartItems });
         // Redirect directly to home/listings grid or a success page container
-        navigate('/products');
+        navigate('/order-success');
     };
 
     return (

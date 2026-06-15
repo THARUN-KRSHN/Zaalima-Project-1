@@ -51,13 +51,15 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                             Log in
                         </a>
 
-                        <a
-                            href="#cart"
-                            className="bg-[var(--primary)] text-[var(--text-on-primary)] px-5 py-2.5 rounded-full text-[13px] font-medium shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] transition-all duration-150 active:scale-[0.98] flex items-center gap-2"
+                        {/* 🌟 FIXED DESKTOP TRIGGER: Swapped href link for dynamic single-page routing */}
+                        <button
+                            type="button"
+                            onClick={() => navigate('/cart')}
+                            className="bg-[var(--primary)] text-[var(--text-on-primary)] px-5 py-2.5 rounded-full text-[13px] font-medium shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] transition-all duration-150 active:scale-[0.98] flex items-center gap-2 cursor-pointer focus:outline-none"
                         >
                             <ShoppingCart className="w-3.5 h-3.5" />
                             <span>Cart</span>
-                        </a>
+                        </button>
                     </div>
 
                     {/* Mobile View Toggle Trigger */}
@@ -107,9 +109,11 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                             </a>
                         </div>
 
+                        {/* 🌟 FIXED MOBILE DRAWER TRIGGER: Re-routes safely and auto-collapses drawer */}
                         <button
+                            type="button"
                             onClick={() => { navigate('/cart'); setIsOpen(false); }}
-                            className="w-full bg-[var(--primary)] text-[var(--text-on-primary)] py-3.5 rounded-xl text-center font-medium text-[14px] shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] transition-colors flex items-center justify-center gap-2"
+                            className="w-full bg-[var(--primary)] text-[var(--text-on-primary)] py-3.5 rounded-xl text-center font-medium text-[14px] shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] transition-colors flex items-center justify-center gap-2 cursor-pointer focus:outline-none"
                         >
                             <ShoppingCart className="w-4 h-4" />
                             <span>View Shopping Cart</span>
