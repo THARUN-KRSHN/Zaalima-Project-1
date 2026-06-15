@@ -107,15 +107,14 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                             </a>
                         </div>
 
-                        <a
-                            href="#cart"
-                            onClick={() => setIsOpen(false)}
+                        <button
+                            onClick={() => { navigate('/cart'); setIsOpen(false); }}
                             className="w-full bg-[var(--primary)] text-[var(--text-on-primary)] py-3.5 rounded-xl text-center font-medium text-[14px] shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] transition-colors flex items-center justify-center gap-2"
                         >
                             <ShoppingCart className="w-4 h-4" />
                             <span>View Shopping Cart</span>
                             <ArrowUpRight className="w-4 h-4 opacity-60" />
-                        </a>
+                        </button>
                     </div>
                 )}
 
