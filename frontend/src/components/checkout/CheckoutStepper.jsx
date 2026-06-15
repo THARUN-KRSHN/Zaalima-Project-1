@@ -9,51 +9,64 @@ export default function CheckoutStepper({ currentStep = 2 }) {
     ];
 
     return (
-        <div className="w-full max-w-xl mx-auto py-4 px-2 select-none">
-            <div className="flex items-center justify-between relative w-full">
+        <div className="w-full max-w-xl mx-auto py-5 px-4 select-none">
 
-                {/* Background Connecting Progress Rail Line */}
-                <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-[var(--border-light)] -translate-y-1/2 z-0" />
-
-                {/* Dynamic Filled Active Progress Accent Tracker */}
-                <div
-                    className="absolute top-1/2 left-0 h-[2px] bg-[var(--primary)] -translate-y-1/2 z-0 transition-all duration-500 ease-in-out"
-                    style={{ width: `${currentStep === 1 ? '0%' : currentStep === 2 ? '50%' : '100%'}` }}
-                />
-
-                {steps.map((step) => {
+            {/* 🌟 STEPPER TRACKWAY CONTAINER */}
+            <div className="flex items-center justify-between w-full">
+                {steps.map((step, index) => {
                     const isCompleted = currentStep > step.id;
                     const isActive = currentStep === step.id;
 
                     return (
-                        <div key={step.id} className="flex flex-col items-center relative z-10">
-                            {/* Visual Rounded Node Circle */}
-                            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-bold text-xs border-2 transition-all duration-300
-                                ${isCompleted
-                                    ? 'bg-[var(--primary)] border-[var(--primary)] text-[var(--text-on-primary)]'
-                                    : isActive
-                                        ? 'bg-[var(--bg-surface)] border-[var(--primary)] text-[var(--primary)] shadow-sm scale-105'
-                                        : 'bg-[var(--bg-surface)] border-[var(--border-light)] text-[var(--text-muted)]'
-                                }`}
-                            >
-                                {isCompleted ? (
-                                    <Check className="w-4 h-4 stroke-[3]" />
-                                ) : (
-                                    <span>{step.id}</span>
-                                )}
+                        <React.Fragment key={step.id}>
+                            {/* NODE ELEMENT */}
+                            <div className="flex flex-col items-center relative">
+
+                                {/* Refined Node Circle Indicator */}
+                                <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm border transition-all duration-200 shrink-0 relative z-10
+                                    ${isCompleted
+                                        ? 'bg-blue-50 border-blue-500 text-blue-600 dark:bg-blue-950/40 dark:border-blue-400 dark:text-blue-400'
+                                        : isActive
+                                            ? 'bg-[var(--primary)] border-[var(--primary)] text-[var(--text-on-primary)] shadow-sm'
+                                            : 'bg-[var(--bg-surface)] border-stone-200 dark:border-stone-800 text-stone-400 dark:text-stone-600'
+                                    }`}
+                                >
+                                    {isCompleted ? (
+                                        <Check className="w-4 h-4 stroke-[2.5]" />
+                                    ) : (
+                                        <span>{step.id}</span>
+                                    )}
+                                </div>
+
+                                {/* Dynamic Text Label positioned cleanly below the circle */}
+                                <span className={`text-[11px] uppercase mt-2.5 transition-colors duration-200 absolute top-9 whitespace-nowrap
+                                    ${isActive
+                                        ? 'text-stone-900 dark:text-white font-extrabold tracking-tight'
+                                        : 'text-stone-400 dark:text-stone-500 font-medium tracking-normal'}`}
+                                >
+                                    {step.label}
+                                </span>
                             </div>
 
-                            {/* Text label underneath */}
-                            <span className={`text-[11px] sm:text-xs font-bold tracking-wide uppercase mt-1.5 transition-colors
-                                ${isActive ? 'text-[var(--primary)]' : 'text-[var(--text-muted)]'}`}
-                            >
-                                {step.label}
-                            </span>
-                        </div>
+                            {/* 🌟 PERFECTLY CENTERED CONNECTOR LINES
+                                - Removed hacky negative margins entirely.
+                                - The parent flex layout engine automatically locks this to the dead center of the circles. */}
+                            {index < steps.length - 1 && (
+                                <div
+                                    className={`flex-grow h-[1.5px] mx-4 transition-colors duration-500 rounded-full self-center
+                                        ${currentStep > step.id
+                                            ? 'bg-[var(--primary)]'
+                                            : 'bg-stone-200 dark:bg-stone-800'
+                                        }`}
+                                />
+                            )}
+                        </React.Fragment>
                     );
                 })}
-
             </div>
+
+            {/* Generous spacing buffer underneath to make room for the absolute labels */}
+            <div className="h-5" />
         </div>
     );
 }
