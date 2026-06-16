@@ -29,7 +29,14 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                     <div className="hidden md:flex items-center gap-7 text-[var(--text-muted)] text-[14px] font-medium pl-4">
                         <button onClick={() => navigate('/products')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none">Products</button>
                         <a href="#orders" className="hover:text-[var(--primary)] transition-colors duration-150">My Orders</a>
-                        <a href="#vendor" className="hover:text-[var(--primary)] transition-colors duration-150">Vendor Portal</a>
+
+                        {/* 🌟 FIXED DESKTOP LINK: Connected directly to vendor dashboard */}
+                        <button
+                            onClick={() => navigate('/vendor/dashboard')}
+                            className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium"
+                        >
+                            Vendor Portal
+                        </button>
                     </div>
 
                     {/* Desktop Action Handles */}
@@ -51,7 +58,7 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                             Log in
                         </a>
 
-                        {/* 🌟 FIXED DESKTOP TRIGGER: Swapped href link for dynamic single-page routing */}
+                        {/* FIXED DESKTOP TRIGGER: Swapped href link for dynamic single-page routing */}
                         <button
                             type="button"
                             onClick={() => navigate('/cart')}
@@ -103,13 +110,21 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                         <div className="flex flex-col items-center gap-4 text-[15px] font-medium text-[var(--text-main)] w-full">
                             <button onClick={() => { navigate('/products'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none">Products</button>
                             <a href="#orders" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] transition-colors">My Orders</a>
-                            <a href="#vendor" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] transition-colors">Vendor Portal</a>
+
+                            {/* 🌟 FIXED MOBILE LINK: Routes smoothly and collapses menu panel backdrop */}
+                            <button
+                                onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }}
+                                className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium"
+                            >
+                                Vendor Portal
+                            </button>
+
                             <a href="#login" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] border-t border-[var(--border-light)] w-full text-center pt-3 transition-colors">
                                 Log in
                             </a>
                         </div>
 
-                        {/* 🌟 FIXED MOBILE DRAWER TRIGGER: Re-routes safely and auto-collapses drawer */}
+                        {/* FIXED MOBILE DRAWER TRIGGER: Re-routes safely and auto-collapses drawer */}
                         <button
                             type="button"
                             onClick={() => { navigate('/cart'); setIsOpen(false); }}
