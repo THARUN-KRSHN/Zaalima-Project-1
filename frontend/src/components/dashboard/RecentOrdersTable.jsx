@@ -1,22 +1,28 @@
 import React from 'react';
 
-export default function RecentOrdersTable() {
+export default function RecentOrdersTable({ data = [] }) {
 
-    // Preset array data ledger hydrating the data blocks
-    const orders = [
-        { id: 'ZMK-8941-11', customer: 'Aleena Manoj', amount: 898, status: 'Shipped', date: 'June 15, 2026' },
-        { id: 'ZMK-2046-23', customer: 'Melit Joffy', amount: 4092, status: 'Processing', date: 'June 14, 2026' },
+    // Fallback preset data array ledger if no live data is passed via props
+    const fallbackOrders = [
+        { id: 'ZMK-8941-11', customer: 'Aleena Manoj', amount: 898, status: 'Processing', date: 'June 15, 2026' },
+        { id: 'ZMK-2046-23', customer: 'Melit Joffy', amount: 4092, status: 'Pending', date: 'June 14, 2026' },
         { id: 'ZMK-1258-05', customer: 'Chrismon Sunny', amount: 12580, status: 'Delivered', date: 'June 12, 2026' },
-        { id: 'ZMK-0583-92', customer: 'Edwin Shaju', amount: 583, status: 'Cancelled', date: 'June 10, 2026' }
+        { id: 'ZMK-0583-92', customer: 'Edwin Shaju', amount: 583, status: 'Pending', date: 'June 10, 2026' }
     ];
 
-    // Helper method checking string allocations to dynamically balance color status badges
+    const activeOrdersList = data.length > 0 ? data : fallbackOrders;
+
+    // 🌟 UPDATED STATUS BADGE ENGINE: Maps your exact status criteria to distinct premium colors
     const getStatusStyle = (status) => {
-        switch (status.toLowerCase()) {
-            case 'delivered': return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
-            case 'processing': return 'bg-blue-500/10 text-blue-600 dark:text-blue-400';
-            case 'shipped': return 'bg-purple-500/10 text-purple-600 dark:text-purple-400';
-            default: return 'bg-stone-500/10 text-stone-500 dark:text-stone-400';
+        switch (status?.toLowerCase()) {
+            case 'delivered':
+                return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20';
+            case 'processing':
+                return 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20';
+            case 'pending':
+                return 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20';
+            default:
+                return 'bg-stone-500/10 text-stone-500 dark:text-stone-400 border border-stone-500/10';
         }
     };
 
@@ -27,12 +33,11 @@ export default function RecentOrdersTable() {
                 <p className="text-[11px] text-[var(--text-muted)]">Real-time ledger updates across multi-vendor logistics nodes.</p>
             </div>
 
-            {/* 🌟 SCROLL TRACK CONSTRAINTS LAYER: 
-                Forces responsive desktop table scrollbars, preventing layout blowouts on phones */}
+            {/* RESPONSIVE SCROLL LAYER: Wraps table securely to prevent horizontal overflow constraints on mobile layout panels */}
             <div className="w-full overflow-x-auto scrollbar-none rounded-xl border border-[var(--border-light)] bg-[var(--bg-main)]">
                 <table className="w-full min-w-[600px] border-collapse text-left text-xs">
                     <thead>
-                        <tr className="border-b border-[var(--border-light)] bg-[var(--bg-surface-hover)] text-[var(--text-muted)] font-bold uppercase tracking-wider">
+                        <tr className="border-b border-[var(--border-light)] bg-[var(--bg-surface-hover)] text-[var(--text-muted)] font-bold uppercase tracking-wider select-none">
                             <th className="py-3 px-4">Order ID</th>
                             <th className="py-3 px-4">Customer</th>
                             <th className="py-3 px-4">Amount</th>
@@ -41,12 +46,14 @@ export default function RecentOrdersTable() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--border-light)] font-medium text-[var(--text-main)]">
-                        {orders.map((order) => (
+                        {activeOrdersList.map((order) => (
                             <tr key={order.id} className="hover:bg-[var(--bg-surface-hover)]/40 transition-colors">
+                                {/* Order ID styled with your core brand indicator token */}
                                 <td className="py-3.5 px-4 font-mono font-bold text-[var(--primary)]">{order.id}</td>
                                 <td className="py-3.5 px-4 font-semibold">{order.customer}</td>
                                 <td className="py-3.5 px-4 font-bold font-sans">₹{order.amount.toLocaleString()}</td>
                                 <td className="py-3.5 px-4">
+                                    {/* Dynamic Colored Status Badge Container */}
                                     <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide inline-block ${getStatusStyle(order.status)}`}>
                                         {order.status}
                                     </span>
