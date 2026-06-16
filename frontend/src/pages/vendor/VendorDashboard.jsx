@@ -13,20 +13,14 @@ import RecentOrdersTable from '../../components/dashboard/RecentOrdersTable';
 import { dashboardStats, revenueBreakdown, recentOrders } from '../../data/dashboardData';
 
 export default function VendorDashboard() {
-    // Shared display color system depth modes state tracker
     const [isDarkMode, setIsDarkMode] = useState(false);
-
-    // Mobile slide-out overlay backdrop toggle panel manager state
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-    // Internal workspace active tab navigation index tracker
     const [activeTab, setActiveTab] = useState('Dashboard');
 
     return (
         <div className={`${isDarkMode ? 'dark' : ''} min-h-screen w-full bg-[var(--bg-main)] flex transition-colors duration-300`}>
 
-            {/* 🌟 DESKTOP: Renders static on the left rail as 'Sidebar | Main Content'
-                🌟 MOBILE: Hidden off-screen, reveals dynamically via Hamburger click tracking triggers */}
+            {/* SIDEBAR TRACKWAY PANEL */}
             <Sidebar
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
@@ -34,24 +28,25 @@ export default function VendorDashboard() {
                 setActiveTab={setActiveTab}
             />
 
-            {/* MAIN WORKSPACE CANVAS WRAPPER RAIL (Takes remaining width space) */}
+            {/* MAIN WORKSPACE CANVAS WRAPPER */}
             <div className="flex-grow flex flex-col min-w-0 max-h-screen overflow-y-auto">
 
-                {/* TOP BAR BRAND HOOK PLATFORM (Contains title tracker, notifications, profile, and mobile triggers) */}
                 <TopBar
                     title={activeTab}
                     isDarkMode={isDarkMode}
                     onToggleTheme={() => setIsDarkMode(!isDarkMode)}
-                    onOpenSidebar={() => setIsSidebarOpen(true)} // Opens the off-canvas hamburger drawer on mobile
+                    onOpenSidebar={() => setIsSidebarOpen(true)}
                 />
 
-                {/* SCROLLABLE INTERIOR APP HUB COMPONENT VIEWPORTS */}
+                {/* SCROLLABLE INTERIOR APP HUB */}
                 <main className="p-4 sm:p-6 lg:p-8 flex flex-col gap-6 w-full max-w-[1440px] mx-auto animate-in fade-in duration-300">
 
                     {activeTab === 'Dashboard' ? (
                         <>
-                            {/* SECTION 1: SYSTEM PROFILE STATS CARDS GRID 
-                                Hydrated directly from dashboardStats nodes */}
+                            {/* 🌟 STATS CARDS RESPONSIVE GRID CONFIGURATION 
+                                - Mobile: grid-cols-1 (1 Column vertical list stack)
+                                - Tablet (sm:): sm:grid-cols-2 (Clean 2 x 2 balance grid)
+                                - Desktop (lg:): lg:grid-cols-4 (4 Cards side-by-side) */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
                                 <DashboardCard
                                     variant="revenue"
@@ -75,20 +70,20 @@ export default function VendorDashboard() {
                                 />
                             </div>
 
-                            {/* SECTION 2: REVENUE SUMMARY snapshot periodic matrices */}
+                            {/* REVENUE SUMMARY SNAPSHOT */}
                             <div className="w-full">
                                 <RevenueSummary data={revenueBreakdown} />
                             </div>
 
-                            {/* SECTION 3: RECENT DISPATCHES DATATABLE LOG LEDGER REVIEWS */}
+                            {/* RECENT DISPATCHES DATATABLE */}
                             <div className="w-full">
                                 <RecentOrdersTable data={recentOrders} />
                             </div>
                         </>
                     ) : (
-                        /* Standard empty workspace frame fallback placeholder grid sheet for alternative side panel paths */
+                        /* Fallback view placeholder */
                         <div className="w-full py-24 border border-dashed border-[var(--border-light)] rounded-2xl bg-[var(--bg-surface)] text-center text-xs font-bold tracking-wide uppercase text-[var(--text-muted)] animate-pulse">
-                            {activeTab} Management Workspace pipeline modules loading...
+                            {activeTab} Management Workspace parameters loading...
                         </div>
                     )}
 
