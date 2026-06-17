@@ -1,12 +1,15 @@
 import React from 'react';
 import { Hourglass, CheckCircle2, AlertTriangle } from 'lucide-react';
+// 🌟 Connected to dynamic fulfillment pipeline allocations object
+import { fulfillmentTrends } from '../../data/analyticsData';
 
 export default function OrderTrends() {
-    const data = [
-        { id: 'pend', label: 'Pending Orders', count: 24, total: 120, color: 'text-amber-500 border-amber-500/20 bg-amber-500/5', fill: 'bg-amber-500', icon: Hourglass },
-        { id: 'deliv', label: 'Delivered Orders', count: 86, total: 120, color: 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5', fill: 'bg-emerald-500', icon: CheckCircle2 },
-        { id: 'canc', label: 'Cancelled Orders', count: 10, total: 120, color: 'text-rose-500 border-rose-500/20 bg-rose-500/5', fill: 'bg-rose-500', icon: AlertTriangle },
-    ];
+    // Config layout mapping styles based on specific data block definitions
+    const styleMap = {
+        pending: { color: 'text-amber-500 border-amber-500/20 bg-amber-500/5', fill: 'bg-amber-500', icon: Hourglass },
+        delivered: { color: 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5', fill: 'bg-emerald-500', icon: CheckCircle2 },
+        cancelled: { color: 'text-rose-500 border-rose-500/20 bg-rose-500/5', fill: 'bg-rose-500', icon: AlertTriangle }
+    };
 
     return (
         <div className="p-5 sm:p-6 rounded-2xl border border-[var(--border-light)] bg-[var(--bg-surface)] shadow-sm text-left flex flex-col gap-4 w-full">
@@ -16,15 +19,16 @@ export default function OrderTrends() {
             </div>
 
             <div className="flex flex-col gap-4 mt-1">
-                {data.map((trend) => {
-                    const percentage = ((trend.count / trend.total) * 100).toFixed(1);
-                    const Icon = trend.icon;
+                {fulfillmentTrends.breakdown.map((trend) => {
+                    const percentage = ((trend.count / fulfillmentTrends.totalOrders) * 100).toFixed(1);
+                    const design = styleMap[trend.type] || styleMap.pending;
+                    const Icon = design.icon;
 
                     return (
-                        <div key={trend.id} className="w-full flex flex-col gap-2 p-3.5 border border-[var(--border-light)] rounded-xl bg-[var(--bg-main)]">
+                        <div key={trend.type} className="w-full flex flex-col gap-2 p-3.5 border border-[var(--border-light)] rounded-xl bg-[var(--bg-main)]">
                             <div className="flex items-center justify-between w-full">
                                 <div className="flex items-center gap-2.5">
-                                    <div className={`p-1.5 rounded-lg shrink-0 border ${trend.color}`}>
+                                    <div className={`p-1.5 rounded-lg shrink-0 border ${design.color}`}>
                                         <Icon className="w-4 h-4" />
                                     </div>
                                     <span className="text-xs font-bold text-stone-800 dark:text-stone-200">{trend.label}</span>
@@ -34,10 +38,9 @@ export default function OrderTrends() {
                                 </span>
                             </div>
 
-                            {/* Line Meter Track Layout Frame */}
                             <div className="w-full h-1.5 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden">
                                 <div
-                                    className={`h-full rounded-full transition-all duration-500 ease-out ${trend.fill}`}
+                                    className={`h-full rounded-full transition-all duration-500 ease-out ${design.fill}`}
                                     style={{ width: `${percentage}%` }}
                                 />
                             </div>

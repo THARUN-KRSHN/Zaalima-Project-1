@@ -1,14 +1,7 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
-const mockData = [
-    { name: 'Jan', revenue: 18000 },
-    { name: 'Feb', revenue: 24000 },
-    { name: 'Mar', revenue: 32000 },
-    { name: 'Apr', revenue: 28000 },
-    { name: 'May', revenue: 41000 },
-    { name: 'Jun', revenue: 50000 },
-];
+// 🌟 Connected to centralized analytics data engine
+import { revenueData } from '../../data/analyticsData';
 
 export default function RevenueChart() {
     return (
@@ -20,7 +13,7 @@ export default function RevenueChart() {
 
             <div className="w-full flex-grow text-xs font-sans">
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={mockData} margin={{ top: 10, right: 5, left: -25, bottom: 0 }}>
+                    <AreaChart data={revenueData} margin={{ top: 10, right: 5, left: -25, bottom: 0 }}>
                         <defs>
                             <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="rgb(124, 58, 237)" stopOpacity={0.2} />
@@ -28,7 +21,8 @@ export default function RevenueChart() {
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-light)" />
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} stroke="var(--text-muted)" />
+                        {/* Key updated to 'month' to match mock data schema */}
+                        <XAxis dataKey="month" axisLine={false} tickLine={false} stroke="var(--text-muted)" />
                         <YAxis axisLine={false} tickLine={false} stroke="var(--text-muted)" />
                         <Tooltip
                             contentStyle={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-light)', borderRadius: '12px', color: 'var(--text-main)' }}

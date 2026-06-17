@@ -1,13 +1,8 @@
 import React from 'react';
+// 🌟 Connected to live inventory ranking matrix
+import { topProducts } from '../../data/analyticsData';
 
 export default function TopProductsTable() {
-    const products = [
-        { id: 1, name: 'Anarkali Kurta Set', sales: 48, revenue: 43104, stock: 14 },
-        { id: 2, name: 'Vyb Diva Wristwatch', sales: 36, revenue: 73656, stock: 3 },
-        { id: 3, name: 'Premium Silk Saree', sales: 22, revenue: 38500, stock: 25 },
-        { id: 4, name: 'Casual Denim Jacket', sales: 14, revenue: 13986, stock: 0 },
-    ];
-
     return (
         <div className="p-5 sm:p-6 rounded-2xl border border-[var(--border-light)] bg-[var(--bg-surface)] shadow-sm text-left flex flex-col gap-4 w-full overflow-hidden">
             <div>
@@ -26,7 +21,7 @@ export default function TopProductsTable() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--border-light)] font-medium text-[var(--text-main)]">
-                        {products.map((item) => (
+                        {topProducts.map((item) => (
                             <tr key={item.id} className="hover:bg-[var(--bg-surface-hover)]/40 transition-colors">
                                 <td className="py-3.5 px-4 font-bold text-stone-900 dark:text-white">{item.name}</td>
                                 <td className="py-3.5 px-4 font-sans">{item.sales} sold</td>
