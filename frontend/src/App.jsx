@@ -6,8 +6,11 @@ import Cart from "./pages/customer/Cart";
 import Checkout from "./pages/customer/Checkout";
 import OrderSuccess from "./pages/customer/OrderSuccess";
 
-//  Day 06 Administrative Vendor Import
+// Day 06 Administrative Vendor Import
 import VendorDashboard from "./pages/vendor/VendorDashboard";
+
+// 🌟 New Administrative Vendor Analytics Import
+import AnalyticsDashboard from "./pages/vendor/AnalyticsDashboard";
 
 import "./App.css";
 
@@ -26,8 +29,11 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-success" element={<OrderSuccess />} />
 
-          {/* 🌟 Day 06 Operational Vendor Endpoint */}
+          {/* Day 06 Operational Vendor Endpoint */}
           <Route path="/vendor/dashboard" element={<VendorDashboard />} />
+
+          {/* 🌟 New Operational Vendor Analytics Endpoint */}
+          <Route path="/vendor/analytics" element={<AnalyticsDashboard />} />
         </Routes>
       </div>
     </Router>
