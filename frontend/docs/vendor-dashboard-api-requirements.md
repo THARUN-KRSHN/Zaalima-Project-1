@@ -1,6 +1,3 @@
-Here is the comprehensive, functional, and clean API specification markdown document for your backend team. It maps your newly built **Vendor Dashboard** client layout (Stats Cards, Revenue Summary, and Recent Orders Table) directly to backend endpoint definitions, payloads, and database constraints.
-
----
 
 # Zmarket Vendor Dashboard API Specifications & Requirements
 
