@@ -1,23 +1,26 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard, ShoppingBag, ClipboardList,
     BarChart3, Warehouse, Settings, Sparkles, X
 } from 'lucide-react';
 
-export default function Sidebar({ isOpen, onClose, activeTab = 'Dashboard', setActiveTab }) {
+export default function Sidebar({ isOpen, onClose, activeTab }) {
+    const navigate = useNavigate();
 
+    // Config path blueprint structural map arrays
     const menuItems = [
-        { id: 'Dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { id: 'Products', label: 'Products', icon: ShoppingBag },
-        { id: 'Orders', label: 'Orders', icon: ClipboardList },
-        { id: 'Analytics', label: 'Analytics', icon: BarChart3 },
-        { id: 'Inventory', label: 'Inventory', icon: Warehouse },
-        { id: 'Settings', label: 'Settings', icon: Settings },
+        { id: 'Dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/vendor/dashboard' },
+        { id: 'Products', label: 'Products', icon: ShoppingBag, path: '#products' },
+        { id: 'Orders', label: 'Orders', icon: ClipboardList, path: '#orders' },
+        { id: 'Analytics', label: 'Analytics', icon: BarChart3, path: '/vendor/analytics' },
+        { id: 'Inventory', label: 'Inventory', icon: Warehouse, path: '#inventory' },
+        { id: 'Settings', label: 'Settings', icon: Settings, path: '#settings' },
     ];
 
     return (
         <>
-            {/* Mobile Drawer Overlay Background Sheet mask */}
+            {/* Mobile Drawer Overlay Backdrop Sheet mask */}
             {isOpen && (
                 <div
                     onClick={onClose}
@@ -25,7 +28,7 @@ export default function Sidebar({ isOpen, onClose, activeTab = 'Dashboard', setA
                 />
             )}
 
-            {/* 🌟 SLIDE-OUT TRACK PANEL CAPTION CONTAINER */}
+            {/* SLIDE-OUT TRACK PANEL CAPTION CONTAINER */}
             <aside className={`fixed top-0 bottom-0 left-0 w-64 bg-[var(--bg-surface)] border-r border-[var(--border-light)] p-5 z-50 flex flex-col justify-between transition-transform duration-300 md:sticky md:translate-x-0
                 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
             >
@@ -50,19 +53,25 @@ export default function Sidebar({ isOpen, onClose, activeTab = 'Dashboard', setA
                     <nav className="flex flex-col gap-1.5 w-full">
                         {menuItems.map((item) => {
                             const Icon = item.icon;
-                            const isActive = activeTab === item.id;
+                            // Checks against the passed current activeTab identifier string prop
+                            const isActive = activeTab?.toLowerCase() === item.id.toLowerCase();
 
                             return (
                                 <button
                                     key={item.id}
                                     type="button"
                                     onClick={() => {
-                                        if (setActiveTab) setActiveTab(item.id);
-                                        if (window.innerWidth < 768) onClose(); // Auto-collapse on tap
+                                        // 🌟 Dynamic Single Page Link Dispatches
+                                        if (item.path.startsWith('/')) {
+                                            navigate(item.path);
+                                        }
+                                        if (window.innerWidth < 768) {
+                                            onClose(); // Seamlessly dismiss mobile drawers on trigger tap
+                                        }
                                     }}
                                     className={`w-full h-11 px-4 rounded-xl flex items-center gap-3.5 font-bold text-xs tracking-wide transition-all focus:outline-none cursor-pointer
                                         ${isActive
-                                            ? 'bg-[var(--primary)] text-[var(--text-on-primary)] shadow-sm shadow-[var(--primary)]/10'
+                                            ? 'bg-[var(--primary)] text-[var(--text-on-primary)] shadow-sm'
                                             : 'text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-main)]'
                                         }`}
                                 >
