@@ -11,6 +11,12 @@ export const revenueData = [
     { month: "Apr", revenue: 28000 },
     { month: "May", revenue: 41000 },
     { month: "Jun", revenue: 50000 },
+    { month: "July", revenue: 18000 },
+    { month: "Aug", revenue: 24000 },
+    { month: "Sep", revenue: 32000 },
+    { month: "Oct", revenue: 28000 },
+    { month: "Nov", revenue: 41000 },
+    { month: "Dec", revenue: 50000 },
 ];
 
 // 2. Bar Chart Sales-Volume Distribution Nodes
@@ -21,6 +27,12 @@ export const salesVolumeData = [
     { month: "Apr", unitsSold: 69 },
     { month: "May", unitsSold: 94 },
     { month: "Jun", unitsSold: 120 },
+    { month: "July", unitsSold: 45 },
+    { month: "Aug", unitsSold: 58 },
+    { month: "Sep", unitsSold: 82 },
+    { month: "Oct", unitsSold: 69 },
+    { month: "Nov", unitsSold: 94 },
+    { month: "Dec", unitsSold: 120 },
 ];
 
 // 3. Inventory Performance Matrix Ledgers

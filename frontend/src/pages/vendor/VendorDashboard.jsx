@@ -10,7 +10,7 @@ import RevenueSummary from '../../components/dashboard/RevenueSummary';
 import RecentOrdersTable from '../../components/dashboard/RecentOrdersTable';
 
 // --- MOCK DATA ENGINE VALUES INTEGRATION ---
-import { dashboardStats, revenueBreakdown, recentOrders } from '../../data/dashboardData';
+import { recentOrders } from '../../data/dashboardData';
 
 export default function VendorDashboard() {
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -43,36 +43,15 @@ export default function VendorDashboard() {
 
                     {activeTab === 'Dashboard' ? (
                         <>
-                            {/* 🌟 STATS CARDS RESPONSIVE GRID CONFIGURATION 
-                                - Mobile: grid-cols-1 (1 Column vertical list stack)
-                                - Tablet (sm:): sm:grid-cols-2 (Clean 2 x 2 balance grid)
-                                - Desktop (lg:): lg:grid-cols-4 (4 Cards side-by-side) */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
-                                <DashboardCard
-                                    variant="revenue"
-                                    value={dashboardStats.totalRevenue}
-                                    percentage={dashboardStats.growthRates.revenue}
-                                />
-                                <DashboardCard
-                                    variant="orders"
-                                    value={dashboardStats.totalOrders}
-                                    percentage={dashboardStats.growthRates.orders}
-                                />
-                                <DashboardCard
-                                    variant="products"
-                                    value={dashboardStats.totalProducts}
-                                    percentage={dashboardStats.growthRates.products}
-                                />
-                                <DashboardCard
-                                    variant="customers"
-                                    value={dashboardStats.totalCustomers}
-                                    percentage={dashboardStats.growthRates.customers}
-                                />
+                            {/* 🌟 FIX: Removed the grid wrapper that caused the repetition in image_50b993.png.
+                                Render the DashboardCard strip as a clean, single full-width layout node. */}
+                            <div className="w-full">
+                                <DashboardCard />
                             </div>
 
                             {/* REVENUE SUMMARY SNAPSHOT */}
                             <div className="w-full">
-                                <RevenueSummary data={revenueBreakdown} />
+                                <RevenueSummary />
                             </div>
 
                             {/* RECENT DISPATCHES DATATABLE */}
