@@ -11,6 +11,7 @@ import VendorDashboard from "./pages/vendor/VendorDashboard";
 
 // 🌟 New Administrative Vendor Analytics Import
 import AnalyticsDashboard from "./pages/vendor/AnalyticsDashboard";
+import VendorProducts from "./pages/vendor/VendorProducts";
 
 import "./App.css";
 
@@ -34,6 +35,7 @@ function App() {
 
           {/* 🌟 New Operational Vendor Analytics Endpoint */}
           <Route path="/vendor/analytics" element={<AnalyticsDashboard />} />
+          <Route path="/vendor/products" element={<VendorProducts />} />
         </Routes>
       </div>
     </Router>

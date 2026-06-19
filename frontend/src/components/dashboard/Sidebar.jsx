@@ -11,7 +11,8 @@ export default function Sidebar({ isOpen, onClose, activeTab }) {
     // Config path blueprint structural map arrays
     const menuItems = [
         { id: 'Dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/vendor/dashboard' },
-        { id: 'Products', label: 'Products', icon: ShoppingBag, path: '#products' },
+        /* 🌟 FIX: Transformed placeholder string to point directly to your real absolute file route link path */
+        { id: 'Products', label: 'Products', icon: ShoppingBag, path: '/vendor/products' },
         { id: 'Orders', label: 'Orders', icon: ClipboardList, path: '#orders' },
         { id: 'Analytics', label: 'Analytics', icon: BarChart3, path: '/vendor/analytics' },
         { id: 'Inventory', label: 'Inventory', icon: Warehouse, path: '#inventory' },
@@ -61,7 +62,7 @@ export default function Sidebar({ isOpen, onClose, activeTab }) {
                                     key={item.id}
                                     type="button"
                                     onClick={() => {
-                                        // 🌟 Dynamic Single Page Link Dispatches
+                                        // Dynamic Single Page Link Dispatches
                                         if (item.path.startsWith('/')) {
                                             navigate(item.path);
                                         }

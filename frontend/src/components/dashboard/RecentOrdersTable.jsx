@@ -1,7 +1,10 @@
 import React from 'react';
 import { recentOrders } from '../../data/dashboardData';
+// 🌟 Import the Empty Orders component
+import EmptyOrders from '../empty/EmptyOrders';
 
 export default function RecentOrdersTable({ data = [] }) {
+    // If testing an empty state, pass an empty array: data={[]}
     const activeOrdersList = data.length > 0 ? data : recentOrders;
 
     const getStatusStyle = (status) => {
@@ -28,53 +31,46 @@ export default function RecentOrdersTable({ data = [] }) {
                 <p className="text-[11px] text-[var(--text-muted)]">Real-time ledger updates across multi-vendor logistics nodes.</p>
             </div>
 
-            {/* 🌟 FIX: Restored standard browser scroll behavior for mobile viewports, 
-                but calibrated it to gracefully auto-fit inside a single view frame starting from tablet sizes */}
-            <div className="w-full overflow-x-auto sm:overflow-x-visible rounded-xl border border-[var(--border-light)] bg-[var(--bg-main)] scrollbar-thin scrollbar-thumb-stone-200 dark:scrollbar-thumb-stone-800">
-                <table className="w-full min-w-[500px] sm:min-w-0 border-collapse text-left text-xs table-fixed">
-                    <colgroup>
-                        <col className="w-[20%] sm:w-[18%]" />
-                        <col className="w-[30%] sm:w-[32%]" />
-                        <col className="w-[16%] sm:w-[16%]" />
-                        <col className="w-[16%] sm:w-[16%]" />
-                        <col className="w-[18%] sm:w-[18%]" />
-                    </colgroup>
-                    <thead>
-                        <tr className="border-b border-[var(--border-light)] bg-[var(--bg-surface-hover)] text-[var(--text-muted)] font-bold uppercase tracking-wider select-none">
-                            <th className="py-3 px-2 sm:px-4">Order ID</th>
-                            <th className="py-3 px-2 sm:px-4">Customer</th>
-                            <th className="py-3 px-2 sm:px-4">Amount</th>
-                            <th className="py-3 px-2 sm:px-4">Status</th>
-                            <th className="py-3 px-2 sm:px-4 text-right">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[var(--border-light)] font-medium text-[var(--text-main)]">
-                        {activeOrdersList.map((order) => (
-                            <tr key={order.id} className="hover:bg-[var(--bg-surface-hover)]/40 transition-colors">
-                                {/* Brand ID Token layout tracking */}
-                                <td className="py-3.5 px-2 sm:px-4 font-mono font-bold text-[var(--primary)] truncate">
-                                    {order.id}
-                                </td>
-                                <td className="py-3.5 px-2 sm:px-4 font-semibold truncate">
-                                    {order.customer}
-                                </td>
-                                <td className="py-3.5 px-2 sm:px-4 font-bold font-sans truncate">
-                                    ₹{order.amount.toLocaleString()}
-                                </td>
-                                <td className="py-3.5 px-2 sm:px-4">
-                                    <span className={`px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide inline-block ${getStatusStyle(order.status)}`}>
-                                        {order.status}
-                                    </span>
-                                </td>
-                                {/* 🌟 FIX: Uses responsive text reduction text-[11px] sm:text-xs to prevent Date wrapping on tablet profiles */}
-                                <td className="py-3.5 px-2 sm:px-4 text-right text-[var(--text-muted)] font-sans text-[11px] sm:text-xs whitespace-nowrap truncate">
-                                    {order.date}
-                                </td>
+            {/* 🌟 EMPTY STATE CONDITION CHECK */}
+            {activeOrdersList.length === 0 ? (
+                <EmptyOrders />
+            ) : (
+                <div className="w-full overflow-x-auto sm:overflow-x-visible rounded-xl border border-[var(--border-light)] bg-[var(--bg-main)] scrollbar-thin scrollbar-thumb-stone-200 dark:scrollbar-thumb-stone-800">
+                    <table className="w-full min-w-[500px] sm:min-w-0 border-collapse text-left text-xs table-fixed">
+                        <colgroup>
+                            <col className="w-[20%] sm:w-[18%]" />
+                            <col className="w-[30%] sm:w-[32%]" />
+                            <col className="w-[16%] sm:w-[16%]" />
+                            <col className="w-[16%] sm:w-[16%]" />
+                            <col className="w-[18%] sm:w-[18%]" />
+                        </colgroup>
+                        <thead>
+                            <tr className="border-b border-[var(--border-light)] bg-[var(--bg-surface-hover)] text-[var(--text-muted)] font-bold uppercase tracking-wider select-none">
+                                <th className="py-3 px-2 sm:px-4">Order ID</th>
+                                <th className="py-3 px-2 sm:px-4">Customer</th>
+                                <th className="py-3 px-2 sm:px-4">Amount</th>
+                                <th className="py-3 px-2 sm:px-4">Status</th>
+                                <th className="py-3 px-4 text-right">Date</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody className="divide-y divide-[var(--border-light)] font-medium text-[var(--text-main)]">
+                            {activeOrdersList.map((order) => (
+                                <tr key={order.id} className="hover:bg-[var(--bg-surface-hover)]/40 transition-colors">
+                                    <td className="py-3.5 px-2 sm:px-4 font-mono font-bold text-[var(--primary)] truncate">{order.id}</td>
+                                    <td className="py-3.5 px-2 sm:px-4 font-semibold truncate">{order.customer}</td>
+                                    <td className="py-3.5 px-2 sm:px-4 font-bold font-sans truncate">₹{order.amount.toLocaleString()}</td>
+                                    <td className="py-3.5 px-2 sm:px-4">
+                                        <span className={`px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide inline-block ${getStatusStyle(order.status)}`}>
+                                            {order.status}
+                                        </span>
+                                    </td>
+                                    <td className="py-3.5 px-2 sm:px-4 text-right text-[var(--text-muted)] font-sans text-[11px] sm:text-xs whitespace-nowrap truncate">{order.date}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </div>
     );
 }
