@@ -9,9 +9,14 @@ import OrderSuccess from "./pages/customer/OrderSuccess";
 // Day 06 Administrative Vendor Import
 import VendorDashboard from "./pages/vendor/VendorDashboard";
 
-// 🌟 New Administrative Vendor Analytics Import
+// Administrative Vendor Analytics & Products Imports
 import AnalyticsDashboard from "./pages/vendor/AnalyticsDashboard";
 import VendorProducts from "./pages/vendor/VendorProducts";
+
+// 🌟 New Administrative Platform Authentication Page Imports
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 import "./App.css";
 
@@ -30,12 +35,15 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-success" element={<OrderSuccess />} />
 
-          {/* Day 06 Operational Vendor Endpoint */}
+          {/* Day 06 Operational Vendor Dashboard Endpoints */}
           <Route path="/vendor/dashboard" element={<VendorDashboard />} />
-
-          {/* 🌟 New Operational Vendor Analytics Endpoint */}
           <Route path="/vendor/analytics" element={<AnalyticsDashboard />} />
           <Route path="/vendor/products" element={<VendorProducts />} />
+
+          {/* 🌟 New Operational Platform Authentication Endpoints */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>
       </div>
     </Router>

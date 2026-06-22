@@ -30,7 +30,6 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                         <button onClick={() => navigate('/products')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none">Products</button>
                         <a href="#orders" className="hover:text-[var(--primary)] transition-colors duration-150">My Orders</a>
 
-                        {/* 🌟 FIXED DESKTOP LINK: Connected directly to vendor dashboard */}
                         <button
                             onClick={() => navigate('/vendor/dashboard')}
                             className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium"
@@ -54,11 +53,14 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                             )}
                         </button>
 
-                        <a href="#login" className="text-[var(--text-muted)] text-[14px] font-medium hover:text-[var(--text-main)] transition-colors duration-150">
+                        {/* 🌟 FIXED DESKTOP LINK: Connected directly to the new single-page /login route */}
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="text-[var(--text-muted)] text-[14px] font-medium hover:text-[var(--text-main)] transition-colors duration-150 focus:outline-none cursor-pointer"
+                        >
                             Log in
-                        </a>
+                        </button>
 
-                        {/* FIXED DESKTOP TRIGGER: Swapped href link for dynamic single-page routing */}
                         <button
                             type="button"
                             onClick={() => navigate('/cart')}
@@ -111,7 +113,6 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                             <button onClick={() => { navigate('/products'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none">Products</button>
                             <a href="#orders" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] transition-colors">My Orders</a>
 
-                            {/* 🌟 FIXED MOBILE LINK: Routes smoothly and collapses menu panel backdrop */}
                             <button
                                 onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }}
                                 className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium"
@@ -119,12 +120,15 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                                 Vendor Portal
                             </button>
 
-                            <a href="#login" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] border-t border-[var(--border-light)] w-full text-center pt-3 transition-colors">
+                            {/* 🌟 FIXED MOBILE LINK: Redirects smoothly and safely collapses the navigation drawer backdrop */}
+                            <button
+                                onClick={() => { navigate('/login'); setIsOpen(false); }}
+                                className="hover:text-[var(--primary)] border-t border-[var(--border-light)] w-full text-center pt-3 font-medium transition-colors focus:outline-none cursor-pointer"
+                            >
                                 Log in
-                            </a>
+                            </button>
                         </div>
 
-                        {/* FIXED MOBILE DRAWER TRIGGER: Re-routes safely and auto-collapses drawer */}
                         <button
                             type="button"
                             onClick={() => { navigate('/cart'); setIsOpen(false); }}
