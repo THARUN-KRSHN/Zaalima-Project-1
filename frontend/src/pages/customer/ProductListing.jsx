@@ -11,6 +11,9 @@ import CategoryFilter from '../../components/product/CategoryFilter';
 import ProductCard from '../../components/product/ProductCard';
 import Loader from '../../components/common/Loader';
 
+// --- CENTRALIZED MOCK DATA ---
+import { allProducts } from '../../data/products';
+
 export default function ProductListing() {
     const [loading, setLoading] = useState(true);
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -21,80 +24,7 @@ export default function ProductListing() {
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 4;
 
-    const allProducts = [
-        {
-            id: 1,
-            brand: "The Style Story",
-            title: "Anarkali Kurta",
-            category: "Fashion",
-            description: "Women Viscose Rayon Anarkali Kurta, Palazzo & Premium Dupatta Set.",
-            image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&auto=format&fit=crop&q=60",
-            rating: 4.4,
-            reviewCount: 1374,
-            price: 898,
-            tag: "Best Seller"
-        },
-        {
-            id: 2,
-            brand: "Fastrack",
-            title: "Analog Watch",
-            category: "Electronics",
-            description: "Vyb Diva Premium Analog Wristwatch. Designed gracefully for modern women.",
-            image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=500&auto=format&fit=crop&q=60",
-            rating: 4.5,
-            reviewCount: 314,
-            price: 2046,
-            tag: "New Arrival"
-        },
-        {
-            id: 3,
-            brand: "Samsung",
-            title: "Galaxy M06 5G",
-            category: "Electronics",
-            description: "Blazing Black configuration featuring 128 GB & MediaTek Dimensity 6300 chipset.",
-            image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&auto=format&fit=crop&q=60",
-            rating: 4.1,
-            reviewCount: 2355,
-            price: 12580,
-            tag: "Trending"
-        },
-        {
-            id: 4,
-            brand: "Oumad",
-            title: "Floral Print Kurta",
-            category: "Fashion",
-            description: "Traditional refined handwoven Floral Print Kurta, crisp Palazzo & complete Dupatta Set.",
-            image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500&auto=format&fit=crop&q=60",
-            rating: 4.1,
-            reviewCount: 23025,
-            price: 583,
-            tag: "Top Rated"
-        },
-        {
-            id: 5,
-            brand: "Oxford",
-            title: "Classic History Atlas",
-            category: "Books",
-            description: "Detailed cartography maps, historical breakdowns, and educational global timelines.",
-            image: "https://images.unsplash.com/photo-1495640388908-05fa85288e61?w=500&auto=format&fit=crop&q=60",
-            rating: 4.6,
-            reviewCount: 182,
-            price: 450,
-            tag: "Education"
-        },
-        {
-            id: 6,
-            brand: "Penguin",
-            title: "The Sci-Fi Odyssey",
-            category: "Books",
-            description: "A breathtaking epic space fictional novel following extra-galactic space travel frameworks.",
-            image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=500&auto=format&fit=crop&q=60",
-            rating: 4.8,
-            reviewCount: 942,
-            price: 299,
-            tag: "Fiction"
-        }
-    ];
+
 
     const filteredProducts = allProducts.filter((product) => {
         const matchesCategory = activeCategory === 'All' || product.category.toLowerCase() === activeCategory.toLowerCase();

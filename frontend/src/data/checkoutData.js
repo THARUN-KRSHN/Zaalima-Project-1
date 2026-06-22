@@ -30,12 +30,12 @@ export const checkoutCartItems = [
 
 // 3. Export the default values for the forms
 export const defaultShippingAddress = {
-    fullName: "Tharun Krishna",
-    phone: "+91 98765 43210",
-    email: "tharun@zmarket.com",
-    addressLine1: "42/A Premium Arcade, Palace Road",
-    addressLine2: "Near Town Hall Landmark",
-    city: "Irinjalakuda",
-    state: "Kerala",
-    pincode: "680121"
+    fullName: 'Tharunkrishna CU',
+    phone: '9778585423',
+    email: 'tharun@zmarket.com',
+    addressLine1: '401, Cheloorkavu, moonupeedika road',
+    addressLine2: 'Cheloorkavu Temple Road',
+    city: 'Irinjalakuda',
+    state: 'Kerala',
+    pincode: '680121'
 };

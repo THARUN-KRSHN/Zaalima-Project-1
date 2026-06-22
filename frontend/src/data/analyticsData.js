@@ -76,3 +76,11 @@ export const fulfillmentTrends = {
         { type: "cancelled", label: "Cancelled Orders", count: 10 }
     ]
 };
+
+// 5. Dashboard summary metrics used by AnalyticsCard.jsx
+export const analyticsMetrics = [
+    { id: 'rev', label: 'Total Revenue', value: '₹50,000', change: '+15.4%' },
+    { id: 'ord', label: 'Total Orders', value: '120', change: '+8.2%' },
+    { id: 'cust', label: 'Total Customers', value: '80', change: '+12.1%' },
+    { id: 'top', label: 'Top Product', value: 'Anarkali Set', change: '48 Sold' },
+];
