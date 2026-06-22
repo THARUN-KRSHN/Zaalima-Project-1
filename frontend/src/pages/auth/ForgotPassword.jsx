@@ -111,21 +111,22 @@ export default function ForgotPassword() {
 
                             {/* Navigation Footnote: Back to login gate hook */}
                             <div className="w-full text-center mt-3 border-t border-[var(--border-light)] pt-4">
+                                {/* 🌟 FIX: Cleaned up the closing bracket format syntax right below */}
                                 <button
                                     type="button"
                                     onClick={() => navigate('/login')}
                                     className="text-xs font-bold text-[var(--text-muted)] hover:text-[var(--primary)] flex items-center justify-center gap-2 mx-auto focus:outline-none cursor-pointer transition-colors"
-                                )>
-                                <ArrowLeft className="w-4 h-4" />
-                                <span>Back to Sign In</span>
-                            </button>
-                        </div>
+                                >
+                                    <ArrowLeft className="w-4 h-4" />
+                                    <span>Back to Sign In</span>
+                                </button>
+                            </div>
 
-                    </form>
-            </>
+                        </form>
+                    </>
                 )}
 
-        </div>
+            </div>
         </AuthLayout >
     );
 }
