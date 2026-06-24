@@ -61,7 +61,7 @@ export default function RegisterForm() {
         }
 
         console.log("Store registration criteria submission verified:", formData);
-        navigate('/login');
+        navigate('?auth=login');
     };
 
     return (
@@ -140,7 +140,7 @@ export default function RegisterForm() {
                         onChange={handleInputChange}
                         placeholder="••••••••"
                         className={`w-full h-full pl-11 pr-12 rounded-xl border bg-[var(--bg-surface)] text-xs font-mono text-[var(--text-main)] transition-all focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]
-                            ${errors.password ? 'border-rose-500 focus:border-rose-500' : 'border-[var(--border-light)]'}`}
+                            ${errors.password ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-[var(--border-light)]'}`}
                     />
                     <button
                         type="button"
@@ -196,6 +196,18 @@ export default function RegisterForm() {
                 <span>Open Storefront Workspace</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </button>
+
+            {/* 🌟 FIX: Updated Single Page query parameter link redirection target */}
+            <div className="w-full text-center text-xs text-[var(--text-muted)] font-medium mt-2">
+                Already have an account?{' '}
+                <button
+                    type="button"
+                    onClick={() => navigate('?auth=login')}
+                    className="text-[var(--primary)] font-bold hover:underline bg-transparent border-none p-0 focus:outline-none cursor-pointer"
+                >
+                    Sign In
+                </button>
+            </div>
         </form>
     );
 }

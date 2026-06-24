@@ -10,12 +10,10 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
         <nav className="w-full px-4 pt-6 pb-2 select-none font-sans z-50 relative">
             <div className="flex flex-col gap-3 w-full items-center">
 
-                {/* ==========================================
-                    MAIN NAVBAR PILL (Rebranded to Zmarket Routing)
-                    ========================================== */}
+                {/* Main Menu Pill Layout Container */}
                 <div className="w-full md:w-auto md:min-w-[760px] lg:min-w-[840px] h-16 bg-[var(--bg-surface)]/90 backdrop-blur-md border border-[var(--border-light)] rounded-full px-6 flex items-center justify-between shadow-[var(--shadow-sm)] transition-all duration-300">
 
-                    {/* Logo Section */}
+                    {/* Branding Token Core Anchor */}
                     <div onClick={() => navigate('/')} className="flex items-center gap-2.5 cursor-pointer group shrink-0">
                         <div className="w-9 h-9 rounded-full bg-[var(--primary)] flex items-center justify-center text-[var(--text-on-primary)] transition-transform duration-300 group-hover:scale-105 shadow-sm">
                             <Sparkles className="w-4.5 h-4.5 fill-current" />
@@ -25,22 +23,15 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                         </span>
                     </div>
 
-                    {/* Desktop System Context Links */}
+                    {/* Desktop Core Pipeline Links */}
                     <div className="hidden md:flex items-center gap-7 text-[var(--text-muted)] text-[14px] font-medium pl-4">
                         <button onClick={() => navigate('/products')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none">Products</button>
-                        <a href="#orders" className="hover:text-[var(--primary)] transition-colors duration-150">My Orders</a>
-
-                        <button
-                            onClick={() => navigate('/vendor/dashboard')}
-                            className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium"
-                        >
-                            Vendor Portal
-                        </button>
+                        <button onClick={() => navigate('/cart')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none">My Orders</button>
+                        <button onClick={() => navigate('/vendor/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
                     </div>
 
-                    {/* Desktop Action Handles */}
+                    {/* Desktop System Actions Controls Handles */}
                     <div className="hidden md:flex items-center gap-5 shrink-0">
-                        {/* Interactive dynamic Sun/Moon Icon toggle framework */}
                         <button
                             onClick={onToggleTheme}
                             className="text-[var(--text-main)] hover:text-[var(--primary)] transition-colors p-1 focus:outline-none"
@@ -53,9 +44,9 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                             )}
                         </button>
 
-                        {/* 🌟 FIXED DESKTOP LINK: Connected directly to the new single-page /login route */}
+                        {/* 🌟 OVERLAY SWITCH: Triggers the absolute floating overlay instead of hard page redirects */}
                         <button
-                            onClick={() => navigate('/login')}
+                            onClick={() => navigate('?auth=login')}
                             className="text-[var(--text-muted)] text-[14px] font-medium hover:text-[var(--text-main)] transition-colors duration-150 focus:outline-none cursor-pointer"
                         >
                             Log in
@@ -71,7 +62,7 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                         </button>
                     </div>
 
-                    {/* Mobile View Toggle Trigger */}
+                    {/* Mobile Menu Action Toggle Trigger */}
                     <div className="md:hidden flex items-center">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
@@ -83,46 +74,29 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                     </div>
                 </div>
 
-                {/* ==========================================
-                    MOBILE DROPDOWN DRAWER MODAL
-                    ========================================== */}
+                {/* Mobile Dropdown Menu Slider Overlay Drawer Sheet */}
                 {isOpen && (
                     <div className="md:hidden w-full max-w-[calc(100vw-2rem)] bg-[var(--bg-surface)] border border-[var(--border-light)] rounded-[2rem] p-5 flex flex-col items-center gap-5 shadow-[var(--shadow-md)] animate-in fade-in slide-in-from-top-3 duration-200 z-50">
-
-                        {/* Interactive Mobile Theme Toggler Row */}
                         <div className="w-full flex justify-start border-b border-[var(--border-light)] pb-2">
                             <button
                                 onClick={() => { onToggleTheme(); setIsOpen(false); }}
                                 className="flex items-center gap-3 text-[var(--text-main)] font-medium text-[15px] py-1 focus:outline-none"
                             >
                                 {isDarkMode ? (
-                                    <>
-                                        <Sun className="w-4.5 h-4.5 text-amber-500 fill-amber-500" />
-                                        <span>Light Mode</span>
-                                    </>
+                                    <><Sun className="w-4.5 h-4.5 text-amber-500 fill-amber-500" /><span>Light Mode</span></>
                                 ) : (
-                                    <>
-                                        <Moon className="w-4.5 h-4.5 text-[var(--text-muted)]" />
-                                        <span>Dark Mode</span>
-                                    </>
+                                    <><Moon className="w-4.5 h-4.5 text-[var(--text-muted)]" /><span>Dark Mode</span></>
                                 )}
                             </button>
                         </div>
 
                         <div className="flex flex-col items-center gap-4 text-[15px] font-medium text-[var(--text-main)] w-full">
                             <button onClick={() => { navigate('/products'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none">Products</button>
-                            <a href="#orders" onClick={() => setIsOpen(false)} className="hover:text-[var(--primary)] transition-colors">My Orders</a>
+                            <button onClick={() => { navigate('/cart'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none">My Orders</button>
+                            <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
 
                             <button
-                                onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }}
-                                className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium"
-                            >
-                                Vendor Portal
-                            </button>
-
-                            {/* 🌟 FIXED MOBILE LINK: Redirects smoothly and safely collapses the navigation drawer backdrop */}
-                            <button
-                                onClick={() => { navigate('/login'); setIsOpen(false); }}
+                                onClick={() => { navigate('?auth=login'); setIsOpen(false); }}
                                 className="hover:text-[var(--primary)] border-t border-[var(--border-light)] w-full text-center pt-3 font-medium transition-colors focus:outline-none cursor-pointer"
                             >
                                 Log in

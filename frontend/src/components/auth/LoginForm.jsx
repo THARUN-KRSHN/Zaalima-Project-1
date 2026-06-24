@@ -105,15 +105,19 @@ export default function LoginForm() {
                     />
                     <span>Remember me</span>
                 </label>
+
                 <button
                     type="button"
-                    onClick={() => navigate('/forgot-password')}
-                    className="text-[var(--primary)] hover:underline transition-all bg-transparent border-none p-0 focus:outline-none cursor-pointer"
+                    onClick={() => {
+                        // 🌟 FORCE RESET: Destroys the residual stuck browser hash string track
+                        window.location.hash = '';
+                        navigate('?auth=forgot');
+                    }}
+                    className="text-[var(--primary)] font-bold hover:underline transition-all bg-transparent border-none p-0 focus:outline-none cursor-pointer"
                 >
                     Forgot Password?
                 </button>
             </div>
-
             {/* Submit Handle */}
             <button
                 type="submit"
@@ -122,6 +126,18 @@ export default function LoginForm() {
                 <span>Sign In to Account</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </button>
+
+            {/* Register redirection footprint link */}
+            <div className="w-full text-center text-xs text-[var(--text-muted)] font-medium mt-3">
+                Don't have an account?{' '}
+                <button
+                    type="button"
+                    onClick={() => navigate('?auth=register')}
+                    className="text-[var(--primary)] font-bold hover:underline bg-transparent border-none p-0 focus:outline-none cursor-pointer"
+                >
+                    Register Store
+                </button>
+            </div>
         </form>
     );
 }

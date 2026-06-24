@@ -37,9 +37,10 @@ export default function ForgotPasswordForm() {
                 </div>
 
                 <div className="flex flex-col gap-3 w-full pt-2">
+                    {/* 🌟 FIX: Updated back-to-login link to use query mapping parameters */}
                     <button
                         type="button"
-                        onClick={() => navigate('/login')}
+                        onClick={() => navigate('?auth=login')}
                         className="w-full h-11 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-[var(--text-on-primary)] rounded-xl font-bold text-xs tracking-wide shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 focus:outline-none cursor-pointer"
                     >
                         <span>Return to Sign In</span>
@@ -89,9 +90,10 @@ export default function ForgotPasswordForm() {
             </button>
 
             <div className="w-full text-center mt-3 border-t border-[var(--border-light)] pt-4">
+                {/* 🌟 FIX: Updated Back to Sign In button route action parameters target string link */}
                 <button
                     type="button"
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate('?auth=login')}
                     className="text-xs font-bold text-[var(--text-muted)] hover:text-[var(--primary)] flex items-center justify-center gap-2 mx-auto focus:outline-none cursor-pointer transition-colors"
                 >
                     <ArrowLeft className="w-4 h-4" />
