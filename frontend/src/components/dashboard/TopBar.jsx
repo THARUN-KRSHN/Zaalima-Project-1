@@ -1,7 +1,18 @@
 import React from 'react';
-import { Menu, Bell, Sun, Moon, UserCircle2 } from 'lucide-react';
+import { Menu, Bell, Sun, Moon, UserCircle2, LogOut } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../../redux/slices/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 export default function TopBar({ title = "Dashboard", isDarkMode, onToggleTheme, onOpenSidebar }) {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth);
+
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate('/');
+    };
     return (
         <header className="w-full h-16 border-b border-[var(--border-light)] bg-[var(--bg-surface)]/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 transition-colors duration-300">
             {/* Left Column Stack */}
@@ -37,13 +48,22 @@ export default function TopBar({ title = "Dashboard", isDarkMode, onToggleTheme,
                 {/* Vertical Divider element lines */}
                 <div className="h-5 w-[1px] bg-[var(--border-light)] mx-0.5 sm:mx-1" />
 
-                {/* Administrator Profile Node anchor */}
-                <div className="flex items-center gap-2 pl-1 cursor-pointer group">
-                    <UserCircle2 className="w-6.5 h-6.5 text-[var(--text-muted)] group-hover:text-[var(--primary)] transition-colors" />
-                    <span className="hidden sm:inline text-xs font-bold text-[var(--text-main)] group-hover:text-[var(--primary)] transition-colors">
-                        Tharun Krishna
+                {/* User Profile Info and Log Out shortcut trigger */}
+                <div className="flex items-center gap-2 pl-1 group">
+                    <UserCircle2 className="w-6.5 h-6.5 text-[var(--text-muted)]" />
+                    <span className="hidden sm:inline text-xs font-bold text-[var(--text-main)]">
+                        {user?.name || user?.email || 'Guest User'}
                     </span>
                 </div>
+
+                {/* Explicit Logout Trigger */}
+                <button
+                    onClick={handleLogout}
+                    title="Log Out"
+                    className="p-1.5 rounded-lg border border-[var(--border-light)] hover:bg-rose-500/10 text-rose-500 hover:text-rose-600 transition-colors focus:outline-none cursor-pointer active:scale-95 flex items-center justify-center bg-transparent shrink-0"
+                >
+                    <LogOut className="w-4 h-4" />
+                </button>
             </div>
         </header>
     );

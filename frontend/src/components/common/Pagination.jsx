@@ -20,7 +20,7 @@ export default function Pagination({ totalPages = 2, currentPage = 0, onPageChan
                     >
                         {isActive ? (
                             /* ACTIVE STATE: Premium sleek capsule expander with brand ambient glow */
-                            <div className="w-full h-2.5 bg-[var(--primary)] rounded-full shadow-[0_0_12px_var(--primary)] transition-all duration-300 ease-out" />
+                            <div className="w-full h-2.5 bg-[var(--primary)] rounded-full ] transition-all duration-300 ease-out" />
                         ) : (
                             /* INACTIVE STATE: Clean, perfectly rendered neutral themed indicator dots */
                             <div className="w-2.5 h-2.5 rounded-full bg-[var(--text-muted)] opacity-30 hover:opacity-70 hover:bg-[var(--primary)] transition-all duration-200" />

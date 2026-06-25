@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { authSuccess } from '../../redux/slices/authSlice';
 import AuthLayout from '../../layouts/AuthLayout';
 
 export default function Login() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     // Controlled Form Inputs State
     const [formData, setFormData] = useState({
@@ -44,8 +47,34 @@ export default function Login() {
         }
 
         console.log("Authentication credentials sent successfully:", formData);
-        // Redirect directly straight to your active operational dashboard line node
-        navigate('/vendor/dashboard');
+        
+        let role = 'customer';
+        let redirectPath = '/products';
+        
+        const emailLower = formData.email.toLowerCase();
+        if (emailLower.includes('admin')) {
+            role = 'admin';
+            redirectPath = '/admin/dashboard';
+        } else if (emailLower.includes('vendor') || emailLower.includes('merchant')) {
+            role = 'vendor';
+            redirectPath = '/vendor/dashboard';
+        } else {
+            role = 'customer';
+            redirectPath = '/products';
+        }
+
+        const loggedInUser = {
+            email: formData.email,
+            role: role,
+            name: role.charAt(0).toUpperCase() + role.slice(1)
+        };
+
+        dispatch(authSuccess({
+            user: loggedInUser,
+            token: 'mock-session-token-' + Date.now()
+        }));
+
+        navigate(redirectPath);
     };
 
     return (
@@ -129,9 +158,13 @@ export default function Login() {
                             />
                             <span>Remember me</span>
                         </label>
-                        <a href="#forgot" className="text-[var(--primary)] hover:underline transition-all">
+                        <button
+                            type="button"
+                            onClick={() => navigate('?auth=forgot')}
+                            className="text-[var(--primary)] font-bold hover:underline bg-transparent border-none p-0 focus:outline-none cursor-pointer"
+                        >
                             Forgot Password?
-                        </a>
+                        </button>
                     </div>
 
                     {/* Operational Action Button */}
@@ -148,11 +181,44 @@ export default function Login() {
                         Don't have an account?{' '}
                         <button
                             type="button"
-                            onClick={() => navigate('/register')}
+                            onClick={() => navigate('?auth=register')}
                             className="text-[var(--primary)] font-bold hover:underline bg-transparent border-none p-0 focus:outline-none cursor-pointer"
                         >
-                            Register Store
+                            Register User
                         </button>
+                    </div>
+
+                    {/* Quick Demo Credentials Panel */}
+                    <div className="mt-6 pt-5 border-t border-[var(--border-light)] w-full">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] text-center mb-3">
+                            Click to Auto-fill Demo Credentials
+                        </p>
+                        <div className="grid grid-cols-3 gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setFormData({ email: 'customer@zaalima.com', password: 'password123', rememberMe: false })}
+                                className="p-2.5 bg-purple-500/5 hover:bg-purple-500/10 border border-purple-500/10 hover:border-purple-500/20 rounded-xl text-center transition-all focus:outline-none cursor-pointer"
+                            >
+                                <span className="block text-[10px] font-extrabold text-purple-600 dark:text-purple-400">Customer</span>
+                                <span className="block text-[8px] text-[var(--text-muted)] font-mono truncate mt-0.5">customer@zaalima.com</span>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setFormData({ email: 'vendor@zaalima.com', password: 'password123', rememberMe: false })}
+                                className="p-2.5 bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/10 hover:border-amber-500/20 rounded-xl text-center transition-all focus:outline-none cursor-pointer"
+                            >
+                                <span className="block text-[10px] font-extrabold text-amber-600 dark:text-amber-400">Vendor</span>
+                                <span className="block text-[8px] text-[var(--text-muted)] font-mono truncate mt-0.5">vendor@zaalima.com</span>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setFormData({ email: 'admin@zaalima.com', password: 'password123', rememberMe: false })}
+                                className="p-2.5 bg-blue-500/5 hover:bg-blue-500/10 border border-blue-500/10 hover:border-blue-500/20 rounded-xl text-center transition-all focus:outline-none cursor-pointer"
+                            >
+                                <span className="block text-[10px] font-extrabold text-blue-600 dark:text-blue-400">Admin</span>
+                                <span className="block text-[8px] text-[var(--text-muted)] font-mono truncate mt-0.5">admin@zaalima.com</span>
+                            </button>
+                        </div>
                     </div>
 
                 </form>

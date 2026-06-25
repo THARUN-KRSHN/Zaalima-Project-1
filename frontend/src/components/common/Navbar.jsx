@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
-import { Sparkles, Moon, Sun, Menu, X, ArrowUpRight, ShoppingCart } from 'lucide-react';
+import { Sparkles, Moon, Sun, Menu, X, ArrowUpRight, ShoppingCart, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../../redux/slices/authSlice';
 
 export default function Navbar({ isDarkMode, onToggleTheme }) {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { isAuthenticated, user } = useSelector((state) => state.auth);
+
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate('/');
+    };
 
     return (
         <nav className="w-full px-4 pt-6 pb-2 select-none font-sans z-50 relative">
@@ -26,8 +35,21 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                     {/* Desktop Core Pipeline Links */}
                     <div className="hidden md:flex items-center gap-7 text-[var(--text-muted)] text-[14px] font-medium pl-4">
                         <button onClick={() => navigate('/products')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none">Products</button>
-                        <button onClick={() => navigate('/cart')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none">My Orders</button>
-                        <button onClick={() => navigate('/vendor/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
+                        
+                        {isAuthenticated && user?.role === 'admin' && (
+                            <button onClick={() => navigate('/admin/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Admin Portal</button>
+                        )}
+                        
+                        {isAuthenticated && user?.role === 'vendor' && (
+                            <button onClick={() => navigate('/vendor/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
+                        )}
+
+                        {(!isAuthenticated || user?.role === 'customer') && (
+                            <>
+                                <button onClick={() => navigate('/cart')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none">My Orders</button>
+                                <button onClick={() => navigate('/vendor/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
+                            </>
+                        )}
                     </div>
 
                     {/* Desktop System Actions Controls Handles */}
@@ -45,12 +67,28 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                         </button>
 
                         {/* 🌟 OVERLAY SWITCH: Triggers the absolute floating overlay instead of hard page redirects */}
-                        <button
-                            onClick={() => navigate('?auth=login')}
-                            className="text-[var(--text-muted)] text-[14px] font-medium hover:text-[var(--text-main)] transition-colors duration-150 focus:outline-none cursor-pointer"
-                        >
-                            Log in
-                        </button>
+                        {/* Auth status display toggle */}
+                        {isAuthenticated ? (
+                            <div className="flex items-center gap-4">
+                                <span className="text-[13px] font-semibold text-[var(--text-muted)]">
+                                    Hi, <span className="text-[var(--text-main)] font-bold">{user?.name || user?.role}</span>
+                                </span>
+                                <button
+                                    onClick={handleLogout}
+                                    className="text-rose-500 hover:text-rose-600 text-[13px] font-bold transition-colors focus:outline-none cursor-pointer flex items-center gap-1 bg-transparent border-none p-0"
+                                >
+                                    <LogOut className="w-3.5 h-3.5" />
+                                    <span>Log out</span>
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => navigate('?auth=login')}
+                                className="text-[var(--text-muted)] text-[14px] font-medium hover:text-[var(--text-main)] transition-colors duration-150 focus:outline-none cursor-pointer"
+                            >
+                                Log in
+                            </button>
+                        )}
 
                         <button
                             type="button"
@@ -92,15 +130,38 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
 
                         <div className="flex flex-col items-center gap-4 text-[15px] font-medium text-[var(--text-main)] w-full">
                             <button onClick={() => { navigate('/products'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none">Products</button>
-                            <button onClick={() => { navigate('/cart'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none">My Orders</button>
-                            <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
+                            
+                            {isAuthenticated && user?.role === 'admin' && (
+                                <button onClick={() => { navigate('/admin/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Admin Portal</button>
+                            )}
 
-                            <button
-                                onClick={() => { navigate('?auth=login'); setIsOpen(false); }}
-                                className="hover:text-[var(--primary)] border-t border-[var(--border-light)] w-full text-center pt-3 font-medium transition-colors focus:outline-none cursor-pointer"
-                            >
-                                Log in
-                            </button>
+                            {isAuthenticated && user?.role === 'vendor' && (
+                                <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
+                            )}
+
+                            {(!isAuthenticated || user?.role === 'customer') && (
+                                <>
+                                    <button onClick={() => { navigate('/cart'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none">My Orders</button>
+                                    <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
+                                </>
+                            )}
+ 
+                            {isAuthenticated ? (
+                                <button
+                                    onClick={() => { handleLogout(); setIsOpen(false); }}
+                                    className="text-rose-500 hover:text-rose-600 border-t border-[var(--border-light)] w-full text-center pt-3 font-bold transition-colors focus:outline-none cursor-pointer flex items-center justify-center gap-1.5 bg-transparent border-none"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                    <span>Log out</span>
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => { navigate('?auth=login'); setIsOpen(false); }}
+                                    className="hover:text-[var(--primary)] border-t border-[var(--border-light)] w-full text-center pt-3 font-medium transition-colors focus:outline-none cursor-pointer"
+                                >
+                                    Log in
+                                </button>
+                            )}
                         </div>
 
                         <button

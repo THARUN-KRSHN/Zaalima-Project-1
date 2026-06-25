@@ -85,7 +85,13 @@ export default function VendorRegisterForm() {
                 <span>Submit Vendor Application</span><ArrowRight className="w-4 h-4" />
             </button>
 
-            <button type="button" onClick={() => navigate('?auth=register')} className="text-xs font-bold text-[var(--text-muted)] hover:text-[var(--primary)] flex items-center justify-center gap-2 mx-auto py-2"><ArrowLeft className="w-4 h-4" /><span>Back to Choice</span></button>
+            <div className="w-full flex flex-col gap-2.5 items-center mt-3 pt-3 border-t border-[var(--border-light)]">
+                <button type="button" onClick={() => navigate('?auth=register')} className="text-xs font-bold text-[var(--text-muted)] hover:text-[var(--primary)] flex items-center justify-center gap-2 focus:outline-none cursor-pointer"><ArrowLeft className="w-4 h-4" /><span>Back to Choice</span></button>
+                <p className="text-xs text-[var(--text-muted)] font-semibold mt-1">
+                    Already a user?{' '}
+                    <button type="button" onClick={() => navigate('?auth=login')} className="text-[var(--primary)] font-bold hover:underline bg-transparent border-none p-0 focus:outline-none cursor-pointer">Login</button>
+                </p>
+            </div>
         </form>
     );
 }

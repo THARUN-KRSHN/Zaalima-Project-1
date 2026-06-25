@@ -1,17 +1,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import {
     LayoutDashboard, ShoppingBag, ClipboardList,
-    BarChart3, Warehouse, Settings, Sparkles, X
+    BarChart3, Warehouse, Settings, Sparkles, X, User
 } from 'lucide-react';
 
 export default function Sidebar({ isOpen, onClose, activeTab }) {
     const navigate = useNavigate();
+    const { user } = useSelector((state) => state.auth);
+    const isAdmin = user?.role === 'admin';
 
-    // Config path blueprint structural map arrays
-    const menuItems = [
+    // Config path blueprint structural map arrays based on role
+    const menuItems = isAdmin ? [
+        { id: 'Dashboard', label: 'Admin Panel', icon: LayoutDashboard, path: '/admin/dashboard' },
+        { id: 'Vendors', label: 'Manage Vendors', icon: Warehouse, path: '#vendors' },
+        { id: 'Products', label: 'Products Catalog', icon: ShoppingBag, path: '/products' },
+        { id: 'Analytics', label: 'System Analytics', icon: BarChart3, path: '#analytics' },
+        { id: 'Settings', label: 'Settings', icon: Settings, path: '#settings' },
+    ] : [
         { id: 'Dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/vendor/dashboard' },
-        /* 🌟 FIX: Transformed placeholder string to point directly to your real absolute file route link path */
         { id: 'Products', label: 'Products', icon: ShoppingBag, path: '/vendor/products' },
         { id: 'Orders', label: 'Orders', icon: ClipboardList, path: '#orders' },
         { id: 'Analytics', label: 'Analytics', icon: BarChart3, path: '/vendor/analytics' },
@@ -41,7 +49,7 @@ export default function Sidebar({ isOpen, onClose, activeTab }) {
                                 <Sparkles className="w-4 h-4 fill-current" />
                             </div>
                             <span className="text-[16px] text-[var(--text-main)] font-extrabold tracking-tight">
-                                Z<span className="italic font-normal font-serif text-[var(--primary)]">admin</span>
+                                Z<span className="italic font-normal font-serif text-[var(--primary)]">{isAdmin ? 'admin' : 'vendor'}</span>
                             </span>
                         </div>
                         {/* Mobile Close Button Anchor */}

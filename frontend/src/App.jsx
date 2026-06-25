@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
+import Home from "./pages/public/Home";
 // Base Customer Catalogs & Checkout
 import ProductListing from "./pages/customer/ProductListing";
 import ProductDetails from "./pages/customer/ProductDetails";
@@ -19,6 +20,7 @@ import Register from "./pages/auth/Register";
 import CustomerRegister from "./pages/auth/CustomerRegister";
 import VendorRegister from "./pages/auth/VendorRegister";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 // Security Framework Protection Shields
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -50,7 +52,9 @@ export default function App() {
 
         <Routes>
           {/* Public Customer Paths */}
-          <Route path="/" element={<ProductListing />} />
+          <Route path="/" element={<Home />} />
+
+          {/* Customer Catalog continues inside its dedicated path routes */}
           <Route path="/products" element={<ProductListing />} />
           <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/order-success" element={<OrderSuccess />} />
@@ -63,6 +67,9 @@ export default function App() {
           <Route path="/vendor/dashboard" element={<ProtectedRoute allowedRoles={['vendor']}><VendorDashboard /></ProtectedRoute>} />
           <Route path="/vendor/analytics" element={<ProtectedRoute allowedRoles={['vendor']}><AnalyticsDashboard /></ProtectedRoute>} />
           <Route path="/vendor/products" element={<ProtectedRoute allowedRoles={['vendor']}><VendorProducts /></ProtectedRoute>} />
+
+          {/* 🔐 Protected Admin-Only Administration Workspace Nodes */}
+          <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
 
           {/* Fallback endpoints ensuring catalog backgrounds stay visible and blurred behind modals */}
           <Route path="/login" element={<ProductListing />} />

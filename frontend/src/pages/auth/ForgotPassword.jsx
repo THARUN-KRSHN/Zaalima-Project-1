@@ -49,7 +49,7 @@ export default function ForgotPassword() {
                         <div className="flex flex-col gap-3 w-full pt-2">
                             <button
                                 type="button"
-                                onClick={() => navigate('/login')}
+                                onClick={() => navigate('?auth=login')}
                                 className="w-full h-11 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-[var(--text-on-primary)] rounded-xl font-bold text-xs tracking-wide shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 focus:outline-none cursor-pointer"
                             >
                                 <span>Return to Sign In</span>
@@ -114,7 +114,7 @@ export default function ForgotPassword() {
                                 {/* 🌟 FIX: Cleaned up the closing bracket format syntax right below */}
                                 <button
                                     type="button"
-                                    onClick={() => navigate('/login')}
+                                    onClick={() => navigate('?auth=login')}
                                     className="text-xs font-bold text-[var(--text-muted)] hover:text-[var(--primary)] flex items-center justify-center gap-2 mx-auto focus:outline-none cursor-pointer transition-colors"
                                 >
                                     <ArrowLeft className="w-4 h-4" />
