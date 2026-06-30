@@ -25,7 +25,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 // Customer Operations Pages
 import Orders from "./pages/customer/Orders";
 import OrderDetails from "./pages/customer/OrderDetails";
-import Profile from "./pages/customer/Profile"; // 🌟 ADDED: Profile sub-module page import
+import Profile from "./pages/customer/Profile";
+import Addresses from "./pages/customer/Addresses";
 
 // Security Framework Protection Shields
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -70,9 +71,8 @@ export default function App() {
 
           <Route path="/orders" element={<ProtectedRoute allowedRoles={['customer']}><Orders /></ProtectedRoute>} />
           <Route path="/orders/:id" element={<ProtectedRoute allowedRoles={['customer']}><OrderDetails /></ProtectedRoute>} />
-
-          {/* 🌟 FIX: Mounted profile route node under authorization security shield protection */}
           <Route path="/profile" element={<ProtectedRoute allowedRoles={['customer']}><Profile /></ProtectedRoute>} />
+          <Route path="/profile/addresses" element={<ProtectedRoute allowedRoles={['customer']}><Addresses /></ProtectedRoute>} />
 
           {/* 🔐 Protected Vendor-Only Administration Workspace Nodes */}
           <Route path="/vendor/dashboard" element={<ProtectedRoute allowedRoles={['vendor']}><VendorDashboard /></ProtectedRoute>} />
@@ -91,9 +91,8 @@ export default function App() {
 
           <Route path="/orders" element={<ProductListing />} />
           <Route path="/orders/:id" element={<ProductListing />} />
-
-          {/* 🌟 FIX: Added background blurring target fallback context path link for profile */}
           <Route path="/profile" element={<ProductListing />} />
+          <Route path="/profile/addresses" element={<ProductListing />} />
         </Routes>
 
         {/* Global Dynamic Overlay Portal Mount Layer */}
