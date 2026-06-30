@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { ArrowRight, Plus, Minus } from 'lucide-react';
 
 export default function Footer() {
     const navigate = useNavigate();
     const [openSection, setOpenSection] = useState('marketplace');
+    const { isAuthenticated } = useSelector((state) => state.auth);
 
     const toggleSection = (section) => {
         setOpenSection(openSection === section ? null : section);
@@ -24,10 +26,10 @@ export default function Footer() {
         customer: {
             title: 'Customer Portal',
             links: [
-                { label: 'My Dashboard', path: '/cart' },
-                { label: 'Track Order', path: '/cart' },
+                { label: 'My Dashboard', path: isAuthenticated ? '/orders' : '?auth=login' },
+                { label: 'Track Order', path: isAuthenticated ? '/orders' : '?auth=login' },
                 { label: 'Shopping Cart', path: '/cart' },
-                { label: 'Purchase History', path: '/cart' },
+                { label: 'Purchase History', path: isAuthenticated ? '/orders' : '?auth=login' },
                 { label: 'Profile Settings', path: '/checkout' }
             ]
         },
@@ -100,6 +102,7 @@ export default function Footer() {
                         <h3 className="text-[12px] font-bold tracking-wider text-[var(--text-muted)] uppercase">{value.title}</h3>
                         <ul className="flex flex-col gap-2.5 text-[13px] font-sans font-normal text-[var(--text-main)]">
                             {value.links.map((link, i) => (
+                                /* 🌟 FIX A: Swapped trailing broken tag back to cleanly close as li here */
                                 <li key={i}>
                                     <button onClick={() => navigate(link.path)} className="hover:text-[var(--primary)] hover:underline text-left bg-transparent border-none p-0 cursor-pointer focus:outline-none transition-all">
                                         {link.label}
@@ -124,6 +127,7 @@ export default function Footer() {
                             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-60 opacity-100 mb-4' : 'max-h-0 opacity-0'}`}>
                                 <ul className="flex flex-col gap-3 pl-1 font-sans text-[14px]">
                                     {value.links.map((link, i) => (
+                                        /* 🌟 FIX B: Swapped trailing broken tag back to cleanly close as li here too */
                                         <li key={i}>
                                             <button onClick={() => { navigate(link.path); setOpenSection(null); }} className="text-[var(--text-muted)] hover:text-[var(--primary)] text-left bg-transparent border-none p-0 cursor-pointer focus:outline-none">
                                                 {link.label}

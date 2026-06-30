@@ -22,6 +22,10 @@ import VendorRegister from "./pages/auth/VendorRegister";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 
+// Customer Operations Pages
+import Orders from "./pages/customer/Orders";
+import OrderDetails from "./pages/customer/OrderDetails";
+
 // Security Framework Protection Shields
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -54,7 +58,7 @@ export default function App() {
           {/* Public Customer Paths */}
           <Route path="/" element={<Home />} />
 
-          {/* Customer Catalog continues inside its dedicated path routes */}
+          {/* Customer Catalog dedicated path routes */}
           <Route path="/products" element={<ProductListing />} />
           <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/order-success" element={<OrderSuccess />} />
@@ -62,6 +66,10 @@ export default function App() {
           {/* 🔐 Protected Customer-Only Routes */}
           <Route path="/cart" element={<ProtectedRoute allowedRoles={['customer']}><Cart /></ProtectedRoute>} />
           <Route path="/checkout" element={<ProtectedRoute allowedRoles={['customer']}><Checkout /></ProtectedRoute>} />
+
+          {/* 🌟 FIX: Mounted missing customer order management pages beneath the security guard framework */}
+          <Route path="/orders" element={<ProtectedRoute allowedRoles={['customer']}><Orders /></ProtectedRoute>} />
+          <Route path="/orders/:id" element={<ProtectedRoute allowedRoles={['customer']}><OrderDetails /></ProtectedRoute>} />
 
           {/* 🔐 Protected Vendor-Only Administration Workspace Nodes */}
           <Route path="/vendor/dashboard" element={<ProtectedRoute allowedRoles={['vendor']}><VendorDashboard /></ProtectedRoute>} />
@@ -77,6 +85,10 @@ export default function App() {
           <Route path="/register/customer" element={<ProductListing />} />
           <Route path="/register/vendor" element={<ProductListing />} />
           <Route path="/forgot-password" element={<ProductListing />} />
+
+          {/* 🌟 FIX: Background context fallbacks added to ensure clean blurring states */}
+          <Route path="/orders" element={<ProductListing />} />
+          <Route path="/orders/:id" element={<ProductListing />} />
         </Routes>
 
         {/* Global Dynamic Overlay Portal Mount Layer */}

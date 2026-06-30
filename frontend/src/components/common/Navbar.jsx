@@ -35,20 +35,22 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                     {/* Desktop Core Pipeline Links */}
                     <div className="hidden md:flex items-center gap-7 text-[var(--text-muted)] text-[14px] font-medium pl-4">
                         <button onClick={() => navigate('/products')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none">Products</button>
-                        
+
                         {isAuthenticated && user?.role === 'admin' && (
                             <button onClick={() => navigate('/admin/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Admin Portal</button>
                         )}
-                        
+
                         {isAuthenticated && user?.role === 'vendor' && (
                             <button onClick={() => navigate('/vendor/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
                         )}
 
+                        {/* 🌟 FIX: Checked role parameters so "My Orders" only mounts for authenticated customer sessions, redirecting directly to /orders instead of /cart */}
+                        {isAuthenticated && user?.role === 'customer' && (
+                            <button onClick={() => navigate('/orders')} className="hover:text-[var(--primary)] text-[var(--text-main)] font-bold transition-colors duration-150 cursor-pointer focus:outline-none">My Orders</button>
+                        )}
+
                         {(!isAuthenticated || user?.role === 'customer') && (
-                            <>
-                                <button onClick={() => navigate('/cart')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none">My Orders</button>
-                                <button onClick={() => navigate('/vendor/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
-                            </>
+                            <button onClick={() => navigate('/vendor/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
                         )}
                     </div>
 
@@ -66,8 +68,6 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                             )}
                         </button>
 
-                        {/* 🌟 OVERLAY SWITCH: Triggers the absolute floating overlay instead of hard page redirects */}
-                        {/* Auth status display toggle */}
                         {isAuthenticated ? (
                             <div className="flex items-center gap-4">
                                 <span className="text-[13px] font-semibold text-[var(--text-muted)]">
@@ -112,7 +112,7 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                     </div>
                 </div>
 
-                {/* Mobile Dropdown Menu Slider Overlay Drawer Sheet */}
+                {/* Mobile Dropdown Drawer Sheet */}
                 {isOpen && (
                     <div className="md:hidden w-full max-w-[calc(100vw-2rem)] bg-[var(--bg-surface)] border border-[var(--border-light)] rounded-[2rem] p-5 flex flex-col items-center gap-5 shadow-[var(--shadow-md)] animate-in fade-in slide-in-from-top-3 duration-200 z-50">
                         <div className="w-full flex justify-start border-b border-[var(--border-light)] pb-2">
@@ -130,7 +130,7 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
 
                         <div className="flex flex-col items-center gap-4 text-[15px] font-medium text-[var(--text-main)] w-full">
                             <button onClick={() => { navigate('/products'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none">Products</button>
-                            
+
                             {isAuthenticated && user?.role === 'admin' && (
                                 <button onClick={() => { navigate('/admin/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Admin Portal</button>
                             )}
@@ -139,13 +139,15 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                                 <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
                             )}
 
-                            {(!isAuthenticated || user?.role === 'customer') && (
-                                <>
-                                    <button onClick={() => { navigate('/cart'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none">My Orders</button>
-                                    <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
-                                </>
+                            {/* 🌟 FIX: Synchronized Mobile "My Orders" logic pattern to use direct /orders pathing for active customer profiles */}
+                            {isAuthenticated && user?.role === 'customer' && (
+                                <button onClick={() => { navigate('/orders'); setIsOpen(false); }} className="hover:text-[var(--primary)] text-[var(--text-main)] font-bold transition-colors cursor-pointer focus:outline-none">My Orders</button>
                             )}
- 
+
+                            {(!isAuthenticated || user?.role === 'customer') && (
+                                <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
+                            )}
+
                             {isAuthenticated ? (
                                 <button
                                     onClick={() => { handleLogout(); setIsOpen(false); }}
