@@ -2,38 +2,41 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
 import Home from "./pages/public/Home";
-// Base Customer Catalogs & Checkout
+// Base Customer Catalogs & Checkout Flow Pages
 import ProductListing from "./pages/customer/ProductListing";
 import ProductDetails from "./pages/customer/ProductDetails";
 import Cart from "./pages/customer/Cart";
 import Checkout from "./pages/customer/Checkout";
 import OrderSuccess from "./pages/customer/OrderSuccess";
 
-// Vendor Dashboard Management Pages
+// Vendor Dashboard Management Framework Pages
 import VendorDashboard from "./pages/vendor/VendorDashboard";
 import AnalyticsDashboard from "./pages/vendor/AnalyticsDashboard";
 import VendorProducts from "./pages/vendor/VendorProducts";
 
-// Auth Container Views
+// Back-Office Super Admin Dashboard
+import AdminDashboard from "./pages/admin/AdminDashboard";
+
+// Modular Form Authentication Overlay Core Injections
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import CustomerRegister from "./pages/auth/CustomerRegister";
 import VendorRegister from "./pages/auth/VendorRegister";
 import ForgotPassword from "./pages/auth/ForgotPassword";
-import AdminDashboard from "./pages/admin/AdminDashboard";
 
-// Customer Operations Pages
+// Completed Customer Suite Operations Page Modules
 import Orders from "./pages/customer/Orders";
 import OrderDetails from "./pages/customer/OrderDetails";
 import Profile from "./pages/customer/Profile";
 import Addresses from "./pages/customer/Addresses";
+import Wishlist from "./pages/customer/Wishlist";
 
-// Security Framework Protection Shields
+// Security Guard Access Authorization Protection Shields
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 import "./App.css";
 
-// 🌟 INTEGRATED ROUTE/QUERY OVERLAY DISPATCH ENGINE
+// 🌟 DYNAMIC MATRIX CONTROLLER: Resolves query parameter triggers and residual sticky hashes gracefully
 function AuthModalOverlayManager() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -57,32 +60,40 @@ export default function App() {
       <div className="w-full min-h-screen m-0 p-0 overflow-x-clip bg-[var(--bg-main)] text-[var(--text-main)] transition-colors duration-300 relative">
 
         <Routes>
-          {/* Public Customer Paths */}
+          {/* ==========================================
+              1. PUBLIC ANONYMOUS PLATFORM PATHWAY NODES
+              ========================================== */}
           <Route path="/" element={<Home />} />
-
-          {/* Customer Catalog dedicated path routes */}
           <Route path="/products" element={<ProductListing />} />
           <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/order-success" element={<OrderSuccess />} />
 
-          {/* 🔐 Protected Customer-Only Routes */}
+          {/* ==========================================
+              2. SECURE RBAC PROTECTED CUSTOMER MODULE ARRAY
+              ========================================== */}
           <Route path="/cart" element={<ProtectedRoute allowedRoles={['customer']}><Cart /></ProtectedRoute>} />
           <Route path="/checkout" element={<ProtectedRoute allowedRoles={['customer']}><Checkout /></ProtectedRoute>} />
-
           <Route path="/orders" element={<ProtectedRoute allowedRoles={['customer']}><Orders /></ProtectedRoute>} />
           <Route path="/orders/:id" element={<ProtectedRoute allowedRoles={['customer']}><OrderDetails /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute allowedRoles={['customer']}><Profile /></ProtectedRoute>} />
           <Route path="/profile/addresses" element={<ProtectedRoute allowedRoles={['customer']}><Addresses /></ProtectedRoute>} />
+          <Route path="/wishlist" element={<ProtectedRoute allowedRoles={['customer']}><Wishlist /></ProtectedRoute>} />
 
-          {/* 🔐 Protected Vendor-Only Administration Workspace Nodes */}
+          {/* ==========================================
+              3. SECURE RBAC PROTECTED COMMERCIAL MERCHANT SUITE
+              ========================================== */}
           <Route path="/vendor/dashboard" element={<ProtectedRoute allowedRoles={['vendor']}><VendorDashboard /></ProtectedRoute>} />
           <Route path="/vendor/analytics" element={<ProtectedRoute allowedRoles={['vendor']}><AnalyticsDashboard /></ProtectedRoute>} />
           <Route path="/vendor/products" element={<ProtectedRoute allowedRoles={['vendor']}><VendorProducts /></ProtectedRoute>} />
 
-          {/* 🔐 Protected Admin-Only Administration Workspace Nodes */}
+          {/* ==========================================
+              4. SECURE RBAC PROTECTED ADMINISTRATIVE MONOLITH
+              ========================================== */}
           <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
 
-          {/* Fallback endpoints ensuring catalog backgrounds stay visible and blurred behind modals */}
+          {/* ==========================================
+              5. BACKGROUND CONTEXT BLUR DIRECTORY FALLBACK ENGINES
+              ========================================== */}
           <Route path="/login" element={<ProductListing />} />
           <Route path="/register" element={<ProductListing />} />
           <Route path="/register/customer" element={<ProductListing />} />
@@ -93,9 +104,10 @@ export default function App() {
           <Route path="/orders/:id" element={<ProductListing />} />
           <Route path="/profile" element={<ProductListing />} />
           <Route path="/profile/addresses" element={<ProductListing />} />
+          <Route path="/wishlist" element={<ProductListing />} />
         </Routes>
 
-        {/* Global Dynamic Overlay Portal Mount Layer */}
+        {/* Global Dynamic Modal Layer Mount Portal Insertion Node */}
         <AuthModalOverlayManager />
 
       </div>
