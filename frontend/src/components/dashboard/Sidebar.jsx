@@ -14,10 +14,12 @@ export default function Sidebar({ isOpen, onClose, activeTab }) {
     // Config path blueprint structural map arrays based on role
     const menuItems = isAdmin ? [
         { id: 'Dashboard', label: 'Admin Panel', icon: LayoutDashboard, path: '/admin/dashboard' },
-        { id: 'Vendors', label: 'Manage Vendors', icon: Warehouse, path: '#vendors' },
-        { id: 'Products', label: 'Products Catalog', icon: ShoppingBag, path: '/products' },
-        { id: 'Analytics', label: 'System Analytics', icon: BarChart3, path: '#analytics' },
-        { id: 'Settings', label: 'Settings', icon: Settings, path: '#settings' },
+        { id: 'Users', label: 'Manage Users', icon: User, path: '/admin/users' },
+        { id: 'Vendors', label: 'Manage Vendors', icon: Warehouse, path: '/admin/vendors' },
+        { id: 'Products', label: 'Products Catalog', icon: ShoppingBag, path: '/admin/products' },
+        { id: 'Orders', label: 'Manage Orders', icon: ClipboardList, path: '/admin/orders' },
+        { id: 'Analytics', label: 'System Analytics', icon: BarChart3, path: '/admin/analytics' },
+        { id: 'Settings', label: 'Settings', icon: Settings, path: '/admin/settings' },
     ] : [
         { id: 'Dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/vendor/dashboard' },
         { id: 'Products', label: 'Products', icon: ShoppingBag, path: '/vendor/products' },

@@ -46,11 +46,11 @@ export default function Footer() {
         assistance: {
             title: 'Platform Support',
             links: [
-                { label: 'Help Center', path: '/' },
-                { label: 'Razorpay Systems', path: '/checkout' },
-                { label: 'Shipping Info', path: '/checkout' },
-                { label: 'Returns Policy', path: '/' },
-                { label: 'Terms of Service', path: '/' }
+                { label: 'FAQs', path: '/faqs' },
+                { label: 'Contact Us', path: '/contact' },
+                { label: 'About Zmarket', path: '/about' },
+                { label: 'Privacy Policy', path: '/privacy-policy' },
+                { label: 'Terms & Conditions', path: '/terms' }
             ]
         }
     };

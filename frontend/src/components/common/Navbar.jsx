@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Moon, Sun, Menu, X, ArrowUpRight, ShoppingCart, LogOut } from 'lucide-react';
+import { Sparkles, Moon, Sun, Menu, X, ArrowUpRight, ShoppingCart, LogOut, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
@@ -20,10 +20,10 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
         <nav className="w-full px-4 pt-6 pb-2 select-none font-sans z-50 relative">
             <div className="flex flex-col gap-3 w-full items-center">
 
-                {/* Main Menu Pill Layout Container */}
+                {/* Main Menu Pill */}
                 <div className="w-full md:w-auto md:min-w-[760px] lg:min-w-[840px] h-16 bg-[var(--bg-surface)]/90 backdrop-blur-md border border-[var(--border-light)] rounded-full px-6 flex items-center justify-between shadow-[var(--shadow-sm)] transition-all duration-300">
 
-                    {/* Branding Token Core Anchor */}
+                    {/* Branding */}
                     <div onClick={() => navigate('/')} className="flex items-center gap-2.5 cursor-pointer group shrink-0">
                         <div className="w-9 h-9 rounded-full bg-[var(--primary)] flex items-center justify-center text-[var(--text-on-primary)] transition-transform duration-300 group-hover:scale-105 shadow-sm">
                             <Sparkles className="w-4.5 h-4.5 fill-current" />
@@ -33,33 +33,40 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                         </span>
                     </div>
 
-                    {/* Desktop Core Pipeline Links */}
+                    {/* Desktop Navigation Links — role-based per spec Section 9 */}
                     <div className="hidden md:flex items-center gap-7 text-[var(--text-muted)] text-[14px] font-medium pl-4">
                         <button onClick={() => navigate('/products')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none">Products</button>
 
-                        {isAuthenticated && user?.role === 'admin' && (
-                            <button onClick={() => navigate('/admin/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Admin Portal</button>
-                        )}
+                        {/* Guest: Home, Products, Categories, Login, Register — Categories handled by products page filters */}
 
-                        {isAuthenticated && user?.role === 'vendor' && (
-                            <button onClick={() => navigate('/vendor/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
-                        )}
-
+                        {/* Customer: show Wishlist link */}
                         {isAuthenticated && user?.role === 'customer' && (
-                            <button onClick={() => navigate('/orders')} className="hover:text-[var(--primary)] text-[var(--text-main)] font-bold transition-colors duration-150 cursor-pointer focus:outline-none">My Orders</button>
+                            <>
+                                <button onClick={() => navigate('/wishlist')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none flex items-center gap-1.5">
+                                    <Heart className="w-3.5 h-3.5" />
+                                    <span>Wishlist</span>
+                                </button>
+                                <button onClick={() => navigate('/orders')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">My Orders</button>
+                            </>
                         )}
 
-                        {(!isAuthenticated || user?.role === 'customer') && (
-                            <button onClick={() => navigate('/vendor/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
+                        {/* Vendor: Dashboard link */}
+                        {isAuthenticated && user?.role === 'vendor' && (
+                            <button onClick={() => navigate('/vendor/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Vendor Dashboard</button>
+                        )}
+
+                        {/* Admin: Dashboard link */}
+                        {isAuthenticated && user?.role === 'admin' && (
+                            <button onClick={() => navigate('/admin/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Admin Dashboard</button>
                         )}
                     </div>
 
-                    {/* Desktop System Actions Controls Handles */}
+                    {/* Desktop Actions */}
                     <div className="hidden md:flex items-center gap-5 shrink-0">
                         <button
                             onClick={onToggleTheme}
                             className="text-[var(--text-main)] hover:text-[var(--primary)] transition-colors p-1 focus:outline-none"
-                            aria-label="Toggle layout theme"
+                            aria-label="Toggle theme"
                         >
                             {isDarkMode ? (
                                 <Sun className="w-[18px] h-[18px] stroke-[1.75] text-amber-500 fill-amber-500 animate-in spin-in-12 duration-200" />
@@ -82,7 +89,6 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
 
                                 {isDropdownOpen && (
                                     <>
-                                        {/* Click overlay to close dropdown */}
                                         <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)} />
                                         
                                         <div className="absolute right-0 mt-2.5 w-52 bg-[var(--bg-surface)] border border-[var(--border-light)] rounded-2xl shadow-[var(--shadow-md)] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150 text-left">
@@ -135,25 +141,36 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                                 )}
                             </div>
                         ) : (
-                            <button
-                                onClick={() => navigate('?auth=login')}
-                                className="text-[var(--text-muted)] text-[14px] font-medium hover:text-[var(--text-main)] transition-colors duration-150 focus:outline-none cursor-pointer"
-                            >
-                                Log in
-                            </button>
+                            <>
+                                <button
+                                    onClick={() => navigate('?auth=login')}
+                                    className="text-[var(--text-muted)] text-[14px] font-medium hover:text-[var(--text-main)] transition-colors duration-150 focus:outline-none cursor-pointer"
+                                >
+                                    Log in
+                                </button>
+                                <button
+                                    onClick={() => navigate('?auth=register')}
+                                    className="text-[var(--text-muted)] text-[14px] font-medium hover:text-[var(--text-main)] transition-colors duration-150 focus:outline-none cursor-pointer"
+                                >
+                                    Register
+                                </button>
+                            </>
                         )}
 
-                        <button
-                            type="button"
-                            onClick={() => navigate('/cart')}
-                            className="bg-[var(--primary)] text-[var(--text-on-primary)] px-5 py-2.5 rounded-full text-[13px] font-medium shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] transition-all duration-150 active:scale-[0.98] flex items-center gap-2 cursor-pointer focus:outline-none"
-                        >
-                            <ShoppingCart className="w-3.5 h-3.5" />
-                            <span>Cart</span>
-                        </button>
+                        {/* Cart button — visible to guests and customers only */}
+                        {(!isAuthenticated || user?.role === 'customer') && (
+                            <button
+                                type="button"
+                                onClick={() => navigate('/cart')}
+                                className="bg-[var(--primary)] text-[var(--text-on-primary)] px-5 py-2.5 rounded-full text-[13px] font-medium shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] transition-all duration-150 active:scale-[0.98] flex items-center gap-2 cursor-pointer focus:outline-none"
+                            >
+                                <ShoppingCart className="w-3.5 h-3.5" />
+                                <span>Cart</span>
+                            </button>
+                        )}
                     </div>
 
-                    {/* Mobile Menu Action Toggle Trigger */}
+                    {/* Mobile Menu Toggle */}
                     <div className="md:hidden flex items-center">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
@@ -165,7 +182,7 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                     </div>
                 </div>
 
-                {/* Mobile Dropdown Drawer Sheet */}
+                {/* Mobile Drawer */}
                 {isOpen && (
                     <div className="md:hidden w-full max-w-[calc(100vw-2rem)] bg-[var(--bg-surface)] border border-[var(--border-light)] rounded-[2rem] p-5 flex flex-col items-center gap-5 shadow-[var(--shadow-md)] animate-in fade-in slide-in-from-top-3 duration-200 z-50">
                         <div className="w-full flex justify-start border-b border-[var(--border-light)] pb-2">
@@ -185,15 +202,11 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                             <button onClick={() => { navigate('/products'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none">Products</button>
 
                             {isAuthenticated && user?.role === 'admin' && (
-                                <button onClick={() => { navigate('/admin/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Admin Portal</button>
+                                <button onClick={() => { navigate('/admin/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Admin Dashboard</button>
                             )}
 
                             {isAuthenticated && user?.role === 'vendor' && (
-                                <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
-                            )}
-
-                            {(!isAuthenticated || user?.role === 'customer') && (
-                                <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
+                                <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Dashboard</button>
                             )}
 
                             {isAuthenticated ? (
@@ -220,24 +233,34 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                                     </button>
                                 </div>
                             ) : (
-                                <button
-                                    onClick={() => { navigate('?auth=login'); setIsOpen(false); }}
-                                    className="hover:text-[var(--primary)] border-t border-[var(--border-light)] w-full text-center pt-3 font-medium transition-colors focus:outline-none cursor-pointer"
-                                >
-                                    Log in
-                                </button>
+                                <div className="flex flex-col gap-3 w-full border-t border-[var(--border-light)] pt-4 items-center">
+                                    <button
+                                        onClick={() => { navigate('?auth=login'); setIsOpen(false); }}
+                                        className="hover:text-[var(--primary)] font-medium transition-colors focus:outline-none cursor-pointer"
+                                    >
+                                        Log in
+                                    </button>
+                                    <button
+                                        onClick={() => { navigate('?auth=register'); setIsOpen(false); }}
+                                        className="hover:text-[var(--primary)] font-medium transition-colors focus:outline-none cursor-pointer"
+                                    >
+                                        Register
+                                    </button>
+                                </div>
                             )}
                         </div>
 
-                        <button
-                            type="button"
-                            onClick={() => { navigate('/cart'); setIsOpen(false); }}
-                            className="w-full bg-[var(--primary)] text-[var(--text-on-primary)] py-3.5 rounded-xl text-center font-medium text-[14px] shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] transition-colors flex items-center justify-center gap-2 cursor-pointer focus:outline-none"
-                        >
-                            <ShoppingCart className="w-4 h-4" />
-                            <span>View Shopping Cart</span>
-                            <ArrowUpRight className="w-4 h-4 opacity-60" />
-                        </button>
+                        {(!isAuthenticated || user?.role === 'customer') && (
+                            <button
+                                type="button"
+                                onClick={() => { navigate('/cart'); setIsOpen(false); }}
+                                className="w-full bg-[var(--primary)] text-[var(--text-on-primary)] py-3.5 rounded-xl text-center font-medium text-[14px] shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] transition-colors flex items-center justify-center gap-2 cursor-pointer focus:outline-none"
+                            >
+                                <ShoppingCart className="w-4 h-4" />
+                                <span>View Cart</span>
+                                <ArrowUpRight className="w-4 h-4 opacity-60" />
+                            </button>
+                        )}
                     </div>
                 )}
 
