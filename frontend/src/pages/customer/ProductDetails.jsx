@@ -6,6 +6,7 @@ import { ShoppingCart, ShoppingBag, ArrowLeft } from 'lucide-react';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import Loader from '../../components/common/Loader';
+import Breadcrumbs from '../../components/common/Breadcrumbs';
 
 // --- REUSABLE PRODUCT ATOMS ---
 import ProductGallery from '../../components/product/ProductGallery';
@@ -24,7 +25,7 @@ export default function ProductDetails() {
         title: "Anarkali Kurta Set",
         category: "Fashion",
         price: 898,
-        description: "Experience premium refinement with this traditional handwoven Viscose Rayon Anarkali Kurta. Complete luxury package includes custom matching comfort-stitched Palazzo pants alongside an embellished premium matching dupatta block set designed for modern elegance. The premium look fabric offers optimal stretch tracking parameters while remaining structurally breathable over long wear framing cycles.",
+        description: "An elegant handwoven Viscose Rayon Anarkali Kurta set. Includes matching Palazzo pants and a beautiful embellished dupatta. Made from premium, soft, and breathable fabric designed for comfort and everyday style.",
         inStock: true,
         images: [
             "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&auto=format&fit=crop&q=80",
@@ -63,10 +64,12 @@ export default function ProductDetails() {
                     <Loader variant="default" />
                 ) : (
                     <>
+                        <Breadcrumbs />
+                        
                         <div className="w-full flex justify-start">
                             <button
-                                onClick={() => navigate("/")}
-                                className="text-xs font-semibold tracking-wide uppercase text-[var(--text-muted)] hover:text-[var(--primary)] flex items-center gap-1.5 transition-colors focus:outline-none"
+                                onClick={() => navigate("/products")}
+                                className="text-xs font-semibold tracking-normal text-[var(--text-muted)] hover:text-[var(--primary)] flex items-center gap-1.5 transition-colors focus:outline-none"
                             >
                                 <ArrowLeft className="w-4 h-4" />
                                 <span>Back to Listings</span>
@@ -101,12 +104,12 @@ export default function ProductDetails() {
                                 </div>
 
                                 <div className="text-xs sm:text-sm text-[var(--text-muted)] font-normal border-t border-[var(--border-light)] pt-4 flex flex-col gap-3">
-                                    <p className="font-bold text-[var(--text-main)] uppercase tracking-wider text-[11px]">Product Highlights</p>
-                                    <ul className="list-disc pl-4 space-y-1.5 leading-relaxed">
-                                        <li>Premium handloomed weave configuration for enhanced breathability layers.</li>
-                                        <li>Pre-shrunk structural processing tracking modern fit outlines.</li>
-                                        <li>Ethically managed and cataloged through direct verified multi-vendor storage hubs.</li>
-                                        <li>Comfort-first inner lining threads built for sustained all-day functionality.</li>
+                                    <p className="font-semibold text-[var(--text-main)] tracking-wider text-xs">Product Highlights</p>
+                                    <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-xs sm:text-sm">
+                                        <li>Premium handloomed fabric that is soft and breathable.</li>
+                                        <li>Pre-shrunk for a perfect long-lasting fit.</li>
+                                        <li>Ethically sourced directly from local weavers.</li>
+                                        <li>Comfortable inner lining, perfect for all-day wear.</li>
                                     </ul>
                                 </div>
 

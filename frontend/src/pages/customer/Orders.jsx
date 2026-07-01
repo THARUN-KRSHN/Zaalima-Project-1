@@ -4,6 +4,7 @@ import { ArrowLeft, Search, SlidersHorizontal } from 'lucide-react';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import OrderCard from '../../components/orders/OrderCard';
+import Breadcrumbs from '../../components/common/Breadcrumbs';
 
 // 🌟 IMPORT CENTRALIZED MOCK DATABASE LAYER
 import { CONFIG_ORDER_MODULE_DATA } from '../../data/orders';
@@ -27,7 +28,9 @@ export default function Orders({ isDarkMode, onToggleTheme }) {
         <div className="w-full min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] transition-colors duration-300 flex flex-col items-center select-none font-sans antialiased text-left">
             <Navbar isDarkMode={isDarkMode} onToggleTheme={onToggleTheme} />
 
-            <main className="w-full max-w-[1280px] px-4 sm:px-8 lg:px-16 py-10 flex flex-col gap-8 flex-grow">
+            <main className="w-full max-w-[1280px] px-4 sm:px-8 lg:px-16 py-10 flex flex-col gap-6 flex-grow">
+                <Breadcrumbs />
+
                 <button onClick={() => navigate('/products')} className="w-fit text-xs font-bold text-[var(--text-muted)] hover:text-[var(--primary)] flex items-center gap-2 focus:outline-none transition-colors cursor-pointer">
                     <ArrowLeft className="w-4 h-4" />
                     <span>{labels.backActionLabel}</span>

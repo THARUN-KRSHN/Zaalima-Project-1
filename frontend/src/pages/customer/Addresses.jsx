@@ -6,29 +6,30 @@ import Footer from '../../components/common/Footer';
 import AddressCard from '../../components/profile/AddressCard';
 import AddressForm from '../../components/profile/AddressForm';
 import DeleteModal from '../../components/profile/DeleteModal';
+import Breadcrumbs from '../../components/common/Breadcrumbs';
 
 // 🌟 DATA CORE REGISTRY LABELS (Zero raw values inside JSX elements)
 const GLOBAL_ADDRESSES_DATA_REGISTRY = {
     labels: {
-        title: "Shipping Address Management",
-        subtitle: "Manipulate multi-tenant location dispatches, anchor delivery profiles, and verify destination node paths.",
-        backLabel: "Return to Profile Matrix",
-        addBtnText: "Register New Address Node",
-        emptyFeedMsg: "No physical dispatch coordinates registered inside this session token profile.",
-        addFormTitle: "Initialize Destination Parameter Block",
-        editFormTitle: "Mutate Location Node Metrics",
-        nameLabel: "Recipient Name",
-        phoneLabel: "Phone Number Mapping",
-        addressLabel: "Physical Street Address Line",
-        cityLabel: "City Node",
-        stateLabel: "State Region",
-        pincodeLabel: "Postal Pincode Token",
-        saveBtnText: "Commit Address Node",
-        cancelBtnText: "Abort Operation",
-        modalHeader: "Confirm Entry Dropping",
-        modalDesc: "Are you certain you wish to purge this location parameter vector share out of your platform registry?",
-        modalCancelText: "Abort Drop",
-        modalConfirmText: "Purge Entry Permanently"
+        title: "My Addresses",
+        subtitle: "Manage your shipping addresses and choose your default delivery location.",
+        backLabel: "Back to Profile",
+        addBtnText: "Add New Address",
+        emptyFeedMsg: "You haven't added any shipping addresses yet.",
+        addFormTitle: "Add Address",
+        editFormTitle: "Edit Address",
+        nameLabel: "Full Name",
+        phoneLabel: "Phone Number",
+        addressLabel: "Street Address",
+        cityLabel: "City",
+        stateLabel: "State",
+        pincodeLabel: "PIN Code",
+        saveBtnText: "Save Address",
+        cancelBtnText: "Cancel",
+        modalHeader: "Delete Address",
+        modalDesc: "Are you sure you want to delete this address?",
+        modalCancelText: "Cancel",
+        modalConfirmText: "Delete"
     },
     // Simulated Database List matching user summaries data metrics
     initialAddressDataset: [
@@ -67,7 +68,9 @@ export default function Addresses({ isDarkMode, onToggleTheme }) {
         <div className="w-full min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] transition-colors duration-300 flex flex-col items-center select-none font-sans antialiased text-left selection:bg-[var(--primary)] selection:text-[var(--text-on-primary)]">
             <Navbar isDarkMode={isDarkMode} onToggleTheme={onToggleTheme} />
 
-            <main className="w-full max-w-[1280px] px-4 sm:px-8 lg:px-16 py-10 flex flex-col gap-8 flex-grow">
+            <main className="w-full max-w-[1280px] px-4 sm:px-8 lg:px-16 py-10 flex flex-col gap-6 flex-grow">
+                <Breadcrumbs />
+
                 <button onClick={() => navigate('/profile')} className="w-fit text-xs font-bold text-[var(--text-muted)] hover:text-[var(--primary)] flex items-center gap-2 focus:outline-none transition-colors cursor-pointer">
                     <ArrowLeft className="w-4 h-4" /><span>{labels.backLabel}</span>
                 </button>

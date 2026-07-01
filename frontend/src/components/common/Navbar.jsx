@@ -6,6 +6,7 @@ import { logout } from '../../redux/slices/authSlice';
 
 export default function Navbar({ isDarkMode, onToggleTheme }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -44,7 +45,6 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                             <button onClick={() => navigate('/vendor/dashboard')} className="hover:text-[var(--primary)] transition-colors duration-150 cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
                         )}
 
-                        {/* 🌟 FIX: Checked role parameters so "My Orders" only mounts for authenticated customer sessions, redirecting directly to /orders instead of /cart */}
                         {isAuthenticated && user?.role === 'customer' && (
                             <button onClick={() => navigate('/orders')} className="hover:text-[var(--primary)] text-[var(--text-main)] font-bold transition-colors duration-150 cursor-pointer focus:outline-none">My Orders</button>
                         )}
@@ -69,17 +69,70 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                         </button>
 
                         {isAuthenticated ? (
-                            <div className="flex items-center gap-4">
-                                <span className="text-[13px] font-semibold text-[var(--text-muted)]">
-                                    Hi, <span className="text-[var(--text-main)] font-bold">{user?.name || user?.role}</span>
-                                </span>
+                            <div className="relative">
                                 <button
-                                    onClick={handleLogout}
-                                    className="text-rose-500 hover:text-rose-600 text-[13px] font-bold transition-colors focus:outline-none cursor-pointer flex items-center gap-1 bg-transparent border-none p-0"
+                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                    className="flex items-center gap-2.5 text-[13px] font-medium text-[var(--text-main)] hover:text-[var(--primary)] transition-colors focus:outline-none cursor-pointer px-3.5 py-1.5 rounded-full border border-[var(--border-light)] bg-[var(--bg-main)] hover:bg-[var(--bg-surface-hover)] shadow-sm"
                                 >
-                                    <LogOut className="w-3.5 h-3.5" />
-                                    <span>Log out</span>
+                                    <div className="w-5 h-5 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center font-bold text-[10px]">
+                                        {(user?.name || user?.role || 'U').substring(0, 2).toUpperCase()}
+                                    </div>
+                                    <span className="font-semibold">{user?.name || user?.role}</span>
                                 </button>
+
+                                {isDropdownOpen && (
+                                    <>
+                                        {/* Click overlay to close dropdown */}
+                                        <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)} />
+                                        
+                                        <div className="absolute right-0 mt-2.5 w-52 bg-[var(--bg-surface)] border border-[var(--border-light)] rounded-2xl shadow-[var(--shadow-md)] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150 text-left">
+                                            <div className="px-4 py-2 border-b border-[var(--border-light)]/60">
+                                                <p className="text-xs text-[var(--text-muted)] font-normal">Signed in as</p>
+                                                <p className="text-xs font-semibold text-[var(--text-main)] truncate mt-0.5">{user?.email || `${user?.role}@zmarket.com`}</p>
+                                            </div>
+                                            
+                                            <button
+                                                onClick={() => { navigate('/profile'); setIsDropdownOpen(false); }}
+                                                className="w-full px-4 py-2 text-[13px] text-stone-700 dark:text-stone-300 hover:text-[var(--primary)] hover:bg-[var(--bg-surface-hover)] transition-colors text-left focus:outline-none cursor-pointer font-medium"
+                                            >
+                                                My Profile
+                                            </button>
+                                            
+                                            {user?.role === 'customer' && (
+                                                <>
+                                                    <button
+                                                        onClick={() => { navigate('/orders'); setIsDropdownOpen(false); }}
+                                                        className="w-full px-4 py-2 text-[13px] text-stone-700 dark:text-stone-300 hover:text-[var(--primary)] hover:bg-[var(--bg-surface-hover)] transition-colors text-left focus:outline-none cursor-pointer font-medium"
+                                                    >
+                                                        My Orders
+                                                    </button>
+                                                    <button
+                                                        onClick={() => { navigate('/profile/addresses'); setIsDropdownOpen(false); }}
+                                                        className="w-full px-4 py-2 text-[13px] text-stone-700 dark:text-stone-300 hover:text-[var(--primary)] hover:bg-[var(--bg-surface-hover)] transition-colors text-left focus:outline-none cursor-pointer font-medium"
+                                                    >
+                                                        Saved Addresses
+                                                    </button>
+                                                    <button
+                                                        onClick={() => { navigate('/wishlist'); setIsDropdownOpen(false); }}
+                                                        className="w-full px-4 py-2 text-[13px] text-stone-700 dark:text-stone-300 hover:text-[var(--primary)] hover:bg-[var(--bg-surface-hover)] transition-colors text-left focus:outline-none cursor-pointer font-medium"
+                                                    >
+                                                        My Wishlist
+                                                    </button>
+                                                </>
+                                            )}
+                                            
+                                            <div className="border-t border-[var(--border-light)]/60 my-1"></div>
+                                            
+                                            <button
+                                                onClick={() => { handleLogout(); setIsDropdownOpen(false); }}
+                                                className="w-full px-4 py-2 text-[13px] text-rose-500 hover:bg-rose-50/50 dark:hover:bg-rose-950/20 transition-colors text-left focus:outline-none cursor-pointer font-bold flex items-center gap-1.5"
+                                            >
+                                                <LogOut className="w-3.5 h-3.5" />
+                                                <span>Log out</span>
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         ) : (
                             <button
@@ -139,23 +192,33 @@ export default function Navbar({ isDarkMode, onToggleTheme }) {
                                 <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
                             )}
 
-                            {/* 🌟 FIX: Synchronized Mobile "My Orders" logic pattern to use direct /orders pathing for active customer profiles */}
-                            {isAuthenticated && user?.role === 'customer' && (
-                                <button onClick={() => { navigate('/orders'); setIsOpen(false); }} className="hover:text-[var(--primary)] text-[var(--text-main)] font-bold transition-colors cursor-pointer focus:outline-none">My Orders</button>
-                            )}
-
                             {(!isAuthenticated || user?.role === 'customer') && (
                                 <button onClick={() => { navigate('/vendor/dashboard'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors cursor-pointer focus:outline-none font-medium">Vendor Portal</button>
                             )}
 
                             {isAuthenticated ? (
-                                <button
-                                    onClick={() => { handleLogout(); setIsOpen(false); }}
-                                    className="text-rose-500 hover:text-rose-600 border-t border-[var(--border-light)] w-full text-center pt-3 font-bold transition-colors focus:outline-none cursor-pointer flex items-center justify-center gap-1.5 bg-transparent border-none"
-                                >
-                                    <LogOut className="w-4 h-4" />
-                                    <span>Log out</span>
-                                </button>
+                                <div className="flex flex-col gap-4 w-full border-t border-[var(--border-light)] pt-4 items-center">
+                                    <span className="text-[13px] text-[var(--text-muted)] font-medium">
+                                        Signed in as <span className="font-bold text-[var(--text-main)]">{user?.name || user?.role}</span>
+                                    </span>
+                                    <button onClick={() => { navigate('/profile'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors font-medium text-[15px] cursor-pointer">My Profile</button>
+                                    
+                                    {user?.role === 'customer' && (
+                                        <>
+                                            <button onClick={() => { navigate('/orders'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors font-medium text-[15px] cursor-pointer">My Orders</button>
+                                            <button onClick={() => { navigate('/profile/addresses'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors font-medium text-[15px] cursor-pointer">Saved Addresses</button>
+                                            <button onClick={() => { navigate('/wishlist'); setIsOpen(false); }} className="hover:text-[var(--primary)] transition-colors font-medium text-[15px] cursor-pointer">My Wishlist</button>
+                                        </>
+                                    )}
+
+                                    <button
+                                        onClick={() => { handleLogout(); setIsOpen(false); }}
+                                        className="text-rose-500 hover:text-rose-600 w-full text-center pt-2 font-bold transition-colors focus:outline-none cursor-pointer flex items-center justify-center gap-1.5 bg-transparent border-none"
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        <span>Log out</span>
+                                    </button>
+                                </div>
                             ) : (
                                 <button
                                     onClick={() => { navigate('?auth=login'); setIsOpen(false); }}

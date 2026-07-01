@@ -5,6 +5,7 @@ import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import WishlistCard from '../../components/wishlist/WishlistCard';
 import EmptyWishlist from '../../components/wishlist/EmptyWishlist';
+import Breadcrumbs from '../../components/common/Breadcrumbs';
 
 // 🌟 DATA SOURCE INTERFACE LOADER
 import { CONFIG_WISHLIST_MODULE_DATA } from '../../data/wishlist';
@@ -28,7 +29,9 @@ export default function Wishlist({ isDarkMode, onToggleTheme }) {
         <div className="w-full min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] transition-colors duration-300 flex flex-col items-center select-none font-sans antialiased text-left selection:bg-[var(--primary)] selection:text-[var(--text-on-primary)]">
             <Navbar isDarkMode={isDarkMode} onToggleTheme={onToggleTheme} />
 
-            <main className="w-full max-w-[1280px] px-4 sm:px-8 lg:px-16 py-10 flex flex-col gap-8 flex-grow">
+            <main className="w-full max-w-[1280px] px-4 sm:px-8 lg:px-16 py-10 flex flex-col gap-6 flex-grow">
+                <Breadcrumbs />
+
                 {/* Upper Escape Path Wrapper Button */}
                 <button
                     onClick={() => navigate('/products')}

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import CarouselPagination from '../../components/common/Pagination';
+import Breadcrumbs from '../../components/common/Breadcrumbs';
 
 // --- PRODUCT COMPONENTS ---
 import SearchBar from '../../components/product/SearchBar';
@@ -62,25 +63,27 @@ export default function ProductListing() {
                 </div>
             </header>
 
-            <main className="w-full max-w-full px-4 sm:px-6 lg:px-16 py-6 flex gap-6 flex-grow items-start justify-center">
+            <main className="w-full max-w-full px-4 sm:px-6 lg:px-16 py-6 flex flex-col gap-4 flex-grow items-stretch justify-start">
+                <Breadcrumbs />
+                
                 {loading ? (
                     <Loader variant="default" />
                 ) : (
-                    <>
-                        {/* DESKTOP SIDEBAR DEPARTMENTS RAIL */}
-                        <aside className="hidden lg:block w-[280px] shrink-0 sticky top-4">
-                            <CategoryFilter activeCategory={activeCategory} onCategoryChange={handleCategoryChange} />
-                        </aside>
+                    <div className="flex flex-col lg:flex-row gap-6 w-full items-start">
+                    {/* DESKTOP SIDEBAR DEPARTMENTS RAIL */}
+                    <aside className="hidden lg:block w-[280px] shrink-0 sticky top-4">
+                        <CategoryFilter activeCategory={activeCategory} onCategoryChange={handleCategoryChange} />
+                    </aside>
 
-                        {/* PRODUCT SHELF CONTAINER FEED */}
-                        <section className="flex-grow flex flex-col justify-between min-h-[65vh] w-full">
-                            <div className="bg-[var(--bg-surface)] p-4 sm:p-6 border border-[var(--border-light)] rounded-xl shadow-sm w-full transition-colors duration-300">
+                    {/* PRODUCT SHELF CONTAINER FEED */}
+                    <section className="flex-grow flex flex-col justify-between min-h-[65vh] w-full">
+                        <div className="bg-[var(--bg-surface)] p-4 sm:p-6 border border-[var(--border-light)] rounded-xl shadow-sm w-full transition-colors duration-300">
 
-                                <div className="mb-6 pb-3 border-b border-[var(--border-light)] flex justify-between items-center gap-2">
-                                    <div>
-                                        <h3 className="text-sm sm:text-lg font-bold text-[var(--text-main)] tracking-tight">
-                                            {searchQuery ? `Search: "${searchQuery}"` : activeCategory === 'All' ? 'Similar Products' : `${activeCategory}`}
-                                        </h3>
+                            <div className="mb-6 pb-3 border-b border-[var(--border-light)] flex justify-between items-center gap-2">
+                                <div>
+                                    <h3 className="text-sm sm:text-lg font-bold text-[var(--text-main)] tracking-tight">
+                                        {searchQuery ? `Search: "${searchQuery}"` : activeCategory === 'All' ? 'All Products' : `${activeCategory}`}
+                                    </h3>
                                         <p className="text-[10px] sm:text-xs text-[var(--text-muted)] mt-0.5 font-normal">
                                             Showing {filteredProducts.length > 0 ? startIndex + 1 : 0}-{Math.min(startIndex + itemsPerPage, filteredProducts.length)} of {filteredProducts.length} items
                                         </p>
@@ -114,7 +117,7 @@ export default function ProductListing() {
                                 </div>
                             )}
                         </section>
-                    </>
+                    </div>
                 )}
             </main>
 

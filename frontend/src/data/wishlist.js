@@ -1,14 +1,14 @@
 export const CONFIG_WISHLIST_MODULE_DATA = {
     labels: {
-        title: "My Stored Wishlist",
-        subtitle: "Review your saved selections, manage multi-tenant listing targets, or migrate your items to the shipping checkout cart.",
+        title: "My Wishlist",
+        subtitle: "Save items you like and add them to your cart anytime.",
         continueShoppingText: "Continue Shopping",
         emptyHeader: "Your Wishlist is Empty",
-        emptyDesc: "No product index matches found inside your saved parameter nodes. Explore live collections to add some.",
-        removeBtnText: "Purge",
+        emptyDesc: "You haven't saved any items to your wishlist yet. Explore our collections to add some.",
+        removeBtnText: "Remove",
         moveToCartBtnText: "Move to Cart",
-        inStockText: "In Stock Node",
-        outOfStockText: "Allocation Depleted"
+        inStockText: "In Stock",
+        outOfStockText: "Out of Stock"
     },
     items: [
         {
