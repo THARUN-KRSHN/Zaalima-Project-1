@@ -51,3 +51,81 @@ export const getVendorProducts = async () => {
         throw error;
     }
 };
+
+/**
+ * 4. Add a new product listing to the vendor storefront
+ */
+export const createProduct = async (productData) => {
+    try {
+        const response = await apiClient.post("/vendor/products", productData);
+        return response.data;
+    } catch (error) {
+        console.error("Failed to list new vendor product:", error.message);
+        throw error;
+    }
+};
+
+/**
+ * 5. Update an existing product's metadata or pricing
+ */
+export const updateProduct = async (productId, updatedData) => {
+    try {
+        const response = await apiClient.put(`/vendor/products/${productId}`, updatedData);
+        return response.data;
+    } catch (error) {
+        console.error(`Failed to update vendor product ${productId}:`, error.message);
+        throw error;
+    }
+};
+
+/**
+ * 6. Delete/remove a product listing
+ */
+export const deleteProduct = async (productId) => {
+    try {
+        const response = await apiClient.delete(`/vendor/products/${productId}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Failed to delete vendor product ${productId}:`, error.message);
+        throw error;
+    }
+};
+
+/**
+ * 7. Update status of a customer order bound to the vendor
+ */
+export const updateOrderStatus = async (orderId, status) => {
+    try {
+        const response = await apiClient.put(`/vendor/orders/${orderId}/status`, { status });
+        return response.data;
+    } catch (error) {
+        console.error(`Failed to update status for order ${orderId}:`, error.message);
+        throw error;
+    }
+};
+
+/**
+ * 8. Update inventory stock level for a product
+ */
+export const updateStock = async (productId, newStock) => {
+    try {
+        const response = await apiClient.put(`/vendor/products/${productId}/stock`, { stock: newStock });
+        return response.data;
+    } catch (error) {
+        console.error(`Failed to update stock for product ${productId}:`, error.message);
+        throw error;
+    }
+};
+
+/**
+ * 9. Save vendor store settings details
+ */
+export const updateVendorSettings = async (settingsData) => {
+    try {
+        const response = await apiClient.put("/vendor/settings", settingsData);
+        return response.data;
+    } catch (error) {
+        console.error("Failed to update store settings configuration:", error.message);
+        throw error;
+    }
+};

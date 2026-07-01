@@ -21,10 +21,10 @@ export default function Sidebar({ isOpen, onClose, activeTab }) {
     ] : [
         { id: 'Dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/vendor/dashboard' },
         { id: 'Products', label: 'Products', icon: ShoppingBag, path: '/vendor/products' },
-        { id: 'Orders', label: 'Orders', icon: ClipboardList, path: '#orders' },
+        { id: 'Orders', label: 'Orders', icon: ClipboardList, path: '/vendor/orders' },
         { id: 'Analytics', label: 'Analytics', icon: BarChart3, path: '/vendor/analytics' },
-        { id: 'Inventory', label: 'Inventory', icon: Warehouse, path: '#inventory' },
-        { id: 'Settings', label: 'Settings', icon: Settings, path: '#settings' },
+        { id: 'Inventory', label: 'Inventory', icon: Warehouse, path: '/vendor/inventory' },
+        { id: 'Settings', label: 'Settings', icon: Settings, path: '/vendor/settings' },
     ];
 
     return (

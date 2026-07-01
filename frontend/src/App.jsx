@@ -13,6 +13,9 @@ import OrderSuccess from "./pages/customer/OrderSuccess";
 import VendorDashboard from "./pages/vendor/VendorDashboard";
 import AnalyticsDashboard from "./pages/vendor/AnalyticsDashboard";
 import VendorProducts from "./pages/vendor/VendorProducts";
+import VendorOrders from "./pages/vendor/VendorOrders";
+import Inventory from "./pages/vendor/Inventory";
+import VendorSettings from "./pages/vendor/VendorSettings";
 
 // Back-Office Super Admin Dashboard
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -85,6 +88,9 @@ export default function App() {
           <Route path="/vendor/dashboard" element={<ProtectedRoute allowedRoles={['vendor']}><VendorDashboard /></ProtectedRoute>} />
           <Route path="/vendor/analytics" element={<ProtectedRoute allowedRoles={['vendor']}><AnalyticsDashboard /></ProtectedRoute>} />
           <Route path="/vendor/products" element={<ProtectedRoute allowedRoles={['vendor']}><VendorProducts /></ProtectedRoute>} />
+          <Route path="/vendor/orders" element={<ProtectedRoute allowedRoles={['vendor']}><VendorOrders /></ProtectedRoute>} />
+          <Route path="/vendor/inventory" element={<ProtectedRoute allowedRoles={['vendor']}><Inventory /></ProtectedRoute>} />
+          <Route path="/vendor/settings" element={<ProtectedRoute allowedRoles={['vendor']}><VendorSettings /></ProtectedRoute>} />
 
           {/* ==========================================
               4. SECURE RBAC PROTECTED ADMINISTRATIVE MONOLITH
