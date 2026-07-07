@@ -146,6 +146,153 @@ const seedData = async () => {
         await Product.insertMany(mappedProducts);
         console.log('Seeded Products catalog.');
 
+        
+        const dbProducts = await Product.find({});
+        
+        const shippingAddress = {
+            fullName: 'Aleena Manoj',
+            phone: '9778585423',
+            email: 'customer@zaalima.com',
+            addressLine1: '401, Cheloorkavu Temple Road',
+            addressLine2: 'Temple Road',
+            city: 'Irinjalakuda',
+            state: 'Kerala',
+            pincode: '680121'
+        };
+
+        const currentYear = new Date().getFullYear();
+        
+        const mockOrders = [
+            {
+                orderId: 'ZMK-8941-11',
+                customer: customerUser._id,
+                items: [
+                    {
+                        product: dbProducts[0]._id,
+                        title: dbProducts[0].title,
+                        quantity: 1,
+                        price: dbProducts[0].price,
+                        vendor: vendorUser._id
+                    }
+                ],
+                shippingAddress,
+                paymentMethod: 'razorpay',
+                paymentStatus: 'PAID',
+                orderStatus: 'SHIPPED',
+                pricingSummary: {
+                    subtotal: dbProducts[0].price,
+                    discount: 0,
+                    tax: Math.round(dbProducts[0].price * 0.05),
+                    shipping: 5000,
+                    total: dbProducts[0].price + Math.round(dbProducts[0].price * 0.05) + 5000
+                },
+                createdAt: new Date(currentYear, 0, 15) 
+            },
+            {
+                orderId: 'ZMK-2046-23',
+                customer: customerUser._id,
+                items: [
+                    {
+                        product: dbProducts[1]._id,
+                        title: dbProducts[1].title,
+                        quantity: 2,
+                        price: dbProducts[1].price,
+                        vendor: vendorUser._id
+                    }
+                ],
+                shippingAddress,
+                paymentMethod: 'razorpay',
+                paymentStatus: 'PAID',
+                orderStatus: 'PROCESSING',
+                pricingSummary: {
+                    subtotal: dbProducts[1].price * 2,
+                    discount: 0,
+                    tax: Math.round(dbProducts[1].price * 2 * 0.05),
+                    shipping: 0,
+                    total: dbProducts[1].price * 2 + Math.round(dbProducts[1].price * 2 * 0.05)
+                },
+                createdAt: new Date(currentYear, 1, 14) 
+            },
+            {
+                orderId: 'ZMK-1258-05',
+                customer: customerUser._id,
+                items: [
+                    {
+                        product: dbProducts[2]._id,
+                        title: dbProducts[2].title,
+                        quantity: 1,
+                        price: dbProducts[2].price,
+                        vendor: vendorUser._id
+                    }
+                ],
+                shippingAddress,
+                paymentMethod: 'razorpay',
+                paymentStatus: 'PAID',
+                orderStatus: 'DELIVERED',
+                pricingSummary: {
+                    subtotal: dbProducts[2].price,
+                    discount: 0,
+                    tax: Math.round(dbProducts[2].price * 0.05),
+                    shipping: 0,
+                    total: dbProducts[2].price + Math.round(dbProducts[2].price * 0.05)
+                },
+                createdAt: new Date(currentYear, 2, 12) 
+            },
+            {
+                orderId: 'ZMK-0583-92',
+                customer: customerUser._id,
+                items: [
+                    {
+                        product: dbProducts[3]._id,
+                        title: dbProducts[3].title,
+                        quantity: 1,
+                        price: dbProducts[3].price,
+                        vendor: vendorUser._id
+                    }
+                ],
+                shippingAddress,
+                paymentMethod: 'cod',
+                paymentStatus: 'PENDING',
+                orderStatus: 'PLACED',
+                pricingSummary: {
+                    subtotal: dbProducts[3].price,
+                    discount: 0,
+                    tax: Math.round(dbProducts[3].price * 0.05),
+                    shipping: 5000,
+                    total: dbProducts[3].price + Math.round(dbProducts[3].price * 0.05) + 5000
+                },
+                createdAt: new Date(currentYear, 3, 10) 
+            },
+            {
+                orderId: 'ZMK-7721-04',
+                customer: customerUser._id,
+                items: [
+                    {
+                        product: dbProducts[4]._id,
+                        title: dbProducts[4].title,
+                        quantity: 1,
+                        price: dbProducts[4].price,
+                        vendor: vendorUser._id
+                    }
+                ],
+                shippingAddress,
+                paymentMethod: 'razorpay',
+                paymentStatus: 'PAID',
+                orderStatus: 'DELIVERED',
+                pricingSummary: {
+                    subtotal: dbProducts[4].price,
+                    discount: 0,
+                    tax: Math.round(dbProducts[4].price * 0.05),
+                    shipping: 5000,
+                    total: dbProducts[4].price + Math.round(dbProducts[4].price * 0.05) + 5000
+                },
+                createdAt: new Date(currentYear, 4, 8) 
+            }
+        ];
+
+        await Order.insertMany(mockOrders);
+        console.log('Seeded Order ledger records for testing.');
+
         console.log('Database Seeding Completed successfully!');
         process.exit(0);
     } catch (error) {

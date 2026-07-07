@@ -1,5 +1,6 @@
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
+import { AppError } from '../utils/AppError.js';
 
 
 
@@ -8,36 +9,30 @@ export const getAnalyticsOverview = async (req, res, next) => {
     const vendorId = req.user._id;
 
     try {
-        
         const orders = await Order.find({ 
             'items.vendor': vendorId,
             orderStatus: { $ne: 'PENDING_PAYMENT' } 
-        });
+        }).lean();
 
         let totalRevenuePaise = 0;
         const customersSet = new Set();
         const productSales = {}; 
 
         for (const order of orders) {
-            
             const vendorItems = order.items.filter(item => item.vendor.toString() === vendorId.toString());
             
             for (const item of vendorItems) {
                 const itemRev = item.price * item.quantity;
-                
                 
                 if (order.orderStatus !== 'CANCELLED') {
                     totalRevenuePaise += itemRev;
                 }
 
                 customersSet.add(order.customer.toString());
-                
-                
                 productSales[item.title] = (productSales[item.title] || 0) + item.quantity;
             }
         }
 
-        
         let topSellingProduct = { name: 'None', unitsSold: 0 };
         Object.keys(productSales).forEach(name => {
             if (productSales[name] > topSellingProduct.unitsSold) {
@@ -74,11 +69,9 @@ export const getTimeSeriesTrends = async (req, res, next) => {
         const orders = await Order.find({
             'items.vendor': vendorId,
             orderStatus: { $nin: ['PENDING_PAYMENT', 'CANCELLED'] } 
-        });
+        }).lean();
 
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        
-        
         const monthlyStats = months.map(m => ({
             month: m,
             revenue: 0,
@@ -89,7 +82,6 @@ export const getTimeSeriesTrends = async (req, res, next) => {
 
         for (const order of orders) {
             const orderDate = new Date(order.createdAt);
-            
             
             if (orderDate.getFullYear() === currentYear) {
                 const monthIndex = orderDate.getMonth(); 
@@ -102,17 +94,13 @@ export const getTimeSeriesTrends = async (req, res, next) => {
             }
         }
 
-        
         const series = monthlyStats.map(item => ({
             ...item,
             revenue: Number((item.revenue / 100).toFixed(2))
         }));
 
-        
-        
         const totalRevCombined = series.reduce((sum, item) => sum + item.revenue, 0);
         if (totalRevCombined === 0) {
-            
             const mocks = [
                 { month: 'Jan', revenue: 18000, unitsSold: 45 },
                 { month: 'Feb', revenue: 24000, unitsSold: 58 },
@@ -151,15 +139,13 @@ export const getTopProductsLedger = async (req, res, next) => {
     const vendorId = req.user._id;
 
     try {
-        const products = await Product.find({ vendor: vendorId });
+        const products = await Product.find({ vendor: vendorId }).lean();
         const orders = await Order.find({
             'items.vendor': vendorId,
             orderStatus: { $nin: ['PENDING_PAYMENT', 'CANCELLED'] }
-        });
+        }).lean();
 
-        
         const productStats = {};
-        
         
         products.forEach(prod => {
             productStats[prod._id.toString()] = {
@@ -171,7 +157,6 @@ export const getTopProductsLedger = async (req, res, next) => {
             };
         });
 
-        
         for (const order of orders) {
             const vendorItems = order.items.filter(item => item.vendor.toString() === vendorId.toString());
             for (const item of vendorItems) {
@@ -180,7 +165,6 @@ export const getTopProductsLedger = async (req, res, next) => {
                     productStats[prodId].sales += item.quantity;
                     productStats[prodId].revenue += (item.price * item.quantity);
                 } else {
-                    
                     productStats[prodId] = {
                         id: prodId,
                         name: item.title,
@@ -192,7 +176,6 @@ export const getTopProductsLedger = async (req, res, next) => {
             }
         }
 
-        
         const topProducts = Object.values(productStats)
             .map(stat => ({
                 ...stat,
@@ -200,7 +183,6 @@ export const getTopProductsLedger = async (req, res, next) => {
             }))
             .sort((a, b) => b.sales - a.sales);
 
-        
         if (topProducts.length === 0 || topProducts.reduce((sum, item) => sum + item.sales, 0) === 0) {
             const mocks = [
                 { id: 'p_01', name: 'Anarkali Kurta Set', sales: 48, revenue: 43104, stock: 14 },
@@ -230,7 +212,7 @@ export const getFulfillmentRatios = async (req, res, next) => {
     const vendorId = req.user._id;
 
     try {
-        const orders = await Order.find({ 'items.vendor': vendorId });
+        const orders = await Order.find({ 'items.vendor': vendorId }).lean();
 
         let pendingCount = 0;
         let deliveredCount = 0;
@@ -248,7 +230,6 @@ export const getFulfillmentRatios = async (req, res, next) => {
 
         const totalOrders = orders.length;
 
-        
         if (totalOrders === 0) {
             return res.json({
                 success: true,

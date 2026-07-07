@@ -1,4 +1,5 @@
 import Product from '../models/Product.js';
+import { AppError } from '../utils/AppError.js';
 
 
 const mapProductToFrontend = (product) => {
@@ -8,6 +9,10 @@ const mapProductToFrontend = (product) => {
         id: obj._id.toString(), 
         price: Number((obj.price / 100).toFixed(2)) 
     };
+};
+
+const escapeRegExp = (string) => {
+    return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 };
 
 
@@ -20,14 +25,16 @@ export const getProducts = async (req, res, next) => {
         const query = {};
 
         if (category && category.toLowerCase() !== 'all') {
-            query.category = { $regex: new RegExp(`^${category}$`, 'i') };
+            const escapedCategory = escapeRegExp(category);
+            query.category = { $regex: new RegExp(`^${escapedCategory}$`, 'i') };
         }
 
         if (search) {
+            const escapedSearch = escapeRegExp(search);
             query.$or = [
-                { title: { $regex: search, $options: 'i' } },
-                { brand: { $regex: search, $options: 'i' } },
-                { description: { $regex: search, $options: 'i' } }
+                { title: { $regex: escapedSearch, $options: 'i' } },
+                { brand: { $regex: escapedSearch, $options: 'i' } },
+                { description: { $regex: escapedSearch, $options: 'i' } }
             ];
         }
 
@@ -56,8 +63,7 @@ export const getProductById = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {
-            res.status(404);
-            throw new Error('Product not found.');
+            throw new AppError('Product not found.', 404, 'PRODUCT_NOT_FOUND');
         }
 
         res.json({
@@ -78,11 +84,9 @@ export const getSimilarProducts = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {
-            res.status(404);
-            throw new Error('Product not found.');
+            throw new AppError('Product not found.', 404, 'PRODUCT_NOT_FOUND');
         }
 
-        
         const similar = await Product.find({
             category: product.category,
             _id: { $ne: product._id }
@@ -105,6 +109,22 @@ export const createProduct = async (req, res, next) => {
 
     try {
         
+        const validationErrors = {};
+        if (!title || !title.trim()) validationErrors.title = 'Product title is required.';
+        if (!brand || !brand.trim()) validationErrors.brand = 'Brand name is required.';
+        if (!category || !category.trim()) validationErrors.category = 'Category is required.';
+        if (!image || !image.trim()) validationErrors.image = 'Product image URL is required.';
+        if (price === undefined || isNaN(price) || Number(price) <= 0) {
+            validationErrors.price = 'Valid product price is required.';
+        }
+        if (stock === undefined || isNaN(stock) || Number(stock) < 0) {
+            validationErrors.stock = 'Stock must be a non-negative number.';
+        }
+
+        if (Object.keys(validationErrors).length > 0) {
+            throw new AppError('Product validation failed.', 400, 'INVALID_PARAMETERS', validationErrors);
+        }
+
         const priceInPaise = Math.round(Number(price) * 100);
 
         const product = await Product.create({
@@ -137,17 +157,29 @@ export const updateProduct = async (req, res, next) => {
     try {
         let product = await Product.findById(req.params.id);
         if (!product) {
-            res.status(404);
-            throw new Error('Product not found.');
+            throw new AppError('Product not found.', 404, 'PRODUCT_NOT_FOUND');
         }
 
-        
         if (product.vendor.toString() !== req.user._id.toString() && req.user.role !== 'superadmin') {
-            res.status(403);
-            throw new Error('Not authorized to modify this product.');
+            throw new AppError('Not authorized to modify this product.', 403, 'FORBIDDEN');
         }
 
-        
+        const validationErrors = {};
+        if (title !== undefined && !title.trim()) validationErrors.title = 'Product title cannot be empty.';
+        if (brand !== undefined && !brand.trim()) validationErrors.brand = 'Brand name cannot be empty.';
+        if (category !== undefined && !category.trim()) validationErrors.category = 'Category cannot be empty.';
+        if (image !== undefined && !image.trim()) validationErrors.image = 'Product image URL cannot be empty.';
+        if (price !== undefined && (isNaN(price) || Number(price) <= 0)) {
+            validationErrors.price = 'Valid product price is required.';
+        }
+        if (stock !== undefined && (isNaN(stock) || Number(stock) < 0)) {
+            validationErrors.stock = 'Stock must be a non-negative number.';
+        }
+
+        if (Object.keys(validationErrors).length > 0) {
+            throw new AppError('Product update validation failed.', 400, 'INVALID_PARAMETERS', validationErrors);
+        }
+
         if (title !== undefined) product.title = title;
         if (brand !== undefined) product.brand = brand;
         if (category !== undefined) product.category = category;
@@ -175,14 +207,11 @@ export const deleteProduct = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {
-            res.status(404);
-            throw new Error('Product not found.');
+            throw new AppError('Product not found.', 404, 'PRODUCT_NOT_FOUND');
         }
 
-        
         if (product.vendor.toString() !== req.user._id.toString() && req.user.role !== 'superadmin') {
-            res.status(403);
-            throw new Error('Not authorized to delete this product.');
+            throw new AppError('Not authorized to delete this product.', 403, 'FORBIDDEN');
         }
 
         await product.deleteOne();

@@ -1,25 +1,21 @@
+import { AppError } from '../utils/AppError.js';
+
 const errorHandler = (err, req, res, next) => {
     console.error('Unhandled Error Caught:', err);
 
-    let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    let statusCode = err.statusCode || (res.statusCode === 200 ? 500 : res.statusCode);
     let message = err.message || 'Internal Server Error';
-    let errorCode = err.codeName || 'SERVER_ERROR';
+    let errorCode = err.errorCode || err.codeName || 'SERVER_ERROR';
+    let validationErrors = err.validationErrors || null;
 
     
     if (err.name === 'ValidationError') {
         statusCode = 400;
         message = 'Validation Error';
         errorCode = 'VALIDATION_FAILED';
-        const errors = {};
+        validationErrors = {};
         Object.keys(err.errors).forEach((key) => {
-            errors[key] = err.errors[key].message;
-        });
-        return res.status(statusCode).json({
-            success: false,
-            errorCode,
-            message,
-            validationErrors: errors,
-            timestamp: new Date().toISOString()
+            validationErrors[key] = err.errors[key].message;
         });
     }
 
@@ -41,6 +37,7 @@ const errorHandler = (err, req, res, next) => {
         success: false,
         errorCode,
         message,
+        ...(validationErrors ? { validationErrors } : {}),
         timestamp: new Date().toISOString(),
         stack: process.env.NODE_ENV === 'production' ? null : err.stack
     });

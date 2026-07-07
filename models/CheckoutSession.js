@@ -34,13 +34,16 @@ const checkoutSessionSchema = new mongoose.Schema({
     },
     expiresAt: {
         type: Date,
-        required: true,
-        index: { expires: 0 } 
+        required: true
     },
     status: {
         type: String,
         enum: ['ACTIVE', 'COMPLETED', 'EXPIRED'],
         default: 'ACTIVE'
+    },
+    stockReturned: {
+        type: Boolean,
+        default: false
     }
 });
 

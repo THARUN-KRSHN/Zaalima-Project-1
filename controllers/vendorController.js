@@ -1,6 +1,7 @@
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import User from '../models/User.js';
+import { AppError } from '../utils/AppError.js';
 
 
 const getVendorOrderData = (order, vendorId) => {
@@ -134,7 +135,6 @@ export const getVendorOrdersLedger = async (req, res, next) => {
         const query = { 'items.vendor': vendorId };
 
         if (status) {
-            
             let dbStatus;
             if (status.toLowerCase() === 'pending') dbStatus = { $in: ['PLACED', 'PENDING_PAYMENT'] };
             else if (status.toLowerCase() === 'processing') dbStatus = 'PROCESSING';
@@ -204,32 +204,29 @@ export const updateVendorOrderStatus = async (req, res, next) => {
     try {
         const order = await Order.findOne({ orderId, 'items.vendor': vendorId });
         if (!order) {
-            res.status(404);
-            throw new Error(`Order ${orderId} not found or doesn't contain items from this vendor.`);
+            throw new AppError(`Order ${orderId} not found or doesn't contain items from this vendor.`, 404, 'ORDER_NOT_FOUND');
         }
 
-        
         let targetStatus;
+        if (!status) {
+            throw new AppError('Status parameter is required.', 400, 'INVALID_PARAMETERS', {
+                status: 'Status parameter is required.'
+            });
+        }
+
         const normStatus = status.toLowerCase();
         if (normStatus === 'processing') targetStatus = 'PROCESSING';
         else if (normStatus === 'shipped') targetStatus = 'SHIPPED';
         else if (normStatus === 'delivered') targetStatus = 'DELIVERED';
         else if (normStatus === 'cancelled') targetStatus = 'CANCELLED';
         else {
-            res.status(400);
-            throw new Error(`Invalid status transition requested: ${status}`);
+            throw new AppError(`Invalid status transition requested: ${status}`, 400, 'INVALID_PARAMETERS');
         }
 
         const currentStatus = order.orderStatus;
 
-        
-        
-        
-        
-        
         if (currentStatus === 'DELIVERED' || currentStatus === 'CANCELLED') {
-            res.status(400);
-            throw new Error(`Order ${orderId} is finalized and cannot be modified.`);
+            throw new AppError(`Order ${orderId} is finalized and cannot be modified.`, 400, 'ORDER_FINALIZED');
         }
 
         let isTransitionValid = false;
@@ -249,13 +246,10 @@ export const updateVendorOrderStatus = async (req, res, next) => {
         }
 
         if (!isTransitionValid) {
-            res.status(400);
-            throw new Error(`Invalid state transition: Cannot change status from ${currentStatus} to ${targetStatus}.`);
+            throw new AppError(`Invalid state transition: Cannot change status from ${currentStatus} to ${targetStatus}.`, 400, 'INVALID_STATUS_TRANSITION');
         }
 
-        
         order.orderStatus = targetStatus;
-        
         
         if (targetStatus === 'CANCELLED') {
             for (const item of order.items) {

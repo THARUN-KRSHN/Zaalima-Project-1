@@ -3,26 +3,34 @@ import Product from '../models/Product.js';
 import Cart from '../models/Cart.js';
 import Order from '../models/Order.js';
 import CheckoutSession from '../models/CheckoutSession.js';
+import { AppError } from '../utils/AppError.js';
 
 
 const returnExpiredStock = async () => {
     try {
         const expiredSessions = await CheckoutSession.find({
             expiresAt: { $lt: new Date() },
-            status: 'ACTIVE'
+            status: 'ACTIVE',
+            stockReturned: false
         });
 
         for (const session of expiredSessions) {
-            session.status = 'EXPIRED';
-            await session.save();
-
             
-            for (const item of session.items) {
-                await Product.findByIdAndUpdate(item.product, {
-                    $inc: { stock: item.quantity }
-                });
+            const updated = await CheckoutSession.findOneAndUpdate(
+                { _id: session._id, stockReturned: false },
+                { $set: { status: 'EXPIRED', stockReturned: true } },
+                { new: true }
+            );
+
+            if (updated) {
+                
+                for (const item of session.items) {
+                    await Product.findByIdAndUpdate(item.product, {
+                        $inc: { stock: item.quantity }
+                    });
+                }
+                console.log(`Returned stock for expired checkout session: ${session.checkoutToken}`);
             }
-            console.log(`Returned stock for expired checkout session: ${session.checkoutToken}`);
         }
     } catch (error) {
         console.error('Error during expired stock recovery:', error.message);
@@ -40,24 +48,27 @@ export const initiateCheckout = async (req, res, next) => {
         await returnExpiredStock();
 
         if (!cartItems || cartItems.length === 0) {
-            res.status(400);
-            throw new Error('Shopping bag is empty.');
+            throw new AppError('Shopping bag is empty.', 400, 'INVALID_PARAMETERS', {
+                cartItems: 'Shopping bag is empty.'
+            });
         }
 
         const itemsToLock = [];
-        let subtotal = 0; 
+        let subtotal = 0;
 
         
         for (const item of cartItems) {
             const product = await Product.findById(item.productId);
             if (!product) {
-                res.status(404);
-                throw new Error(`Product with ID ${item.productId} not found.`);
+                throw new AppError(`Product with ID ${item.productId} not found.`, 404, 'PRODUCT_NOT_FOUND', {
+                    [item.productId]: 'Product not found.'
+                });
             }
 
             if (product.stock < item.quantity) {
-                res.status(400);
-                throw new Error(`Insufficient stock for "${product.title}". Only ${product.stock} items available.`);
+                throw new AppError(`Insufficient stock for "${product.title}". Only ${product.stock} items available.`, 400, 'INSUFFICIENT_STOCK', {
+                    [item.productId]: `Only ${product.stock} items available.`
+                });
             }
 
             subtotal += product.price * item.quantity;
@@ -76,9 +87,9 @@ export const initiateCheckout = async (req, res, next) => {
         }
 
         
-        let discount = 0; 
+        let discount = 0;
         if (promoCode && promoCode.toUpperCase() === 'ZMARKET50') {
-            discount = 15000;
+            discount = 15000; 
         }
 
         
@@ -127,28 +138,33 @@ export const createOrder = async (req, res, next) => {
     try {
         await returnExpiredStock();
 
-        
         if (!shippingAddress) {
-            res.status(400);
-            throw new Error('Shipping address is required.');
+            throw new AppError('Shipping address is required.', 400, 'INVALID_PARAMETERS', {
+                shippingAddress: 'Shipping address is required.'
+            });
         }
 
         const { fullName, phone, email, addressLine1, pincode } = shippingAddress;
+        const validationErrors = {};
+
         if (!fullName || fullName.trim().length < 3) {
-            res.status(400);
-            throw new Error('FullName is required (minimum 3 characters).');
+            validationErrors.fullName = 'FullName is required (minimum 3 characters).';
         }
         if (!phone || !/^[6-9]\d{9}$/.test(phone)) {
-            res.status(400);
-            throw new Error('Valid 10-digit Indian phone number is required.');
+            validationErrors.phone = 'Valid 10-digit Indian phone number is required.';
+        }
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            validationErrors.email = 'Valid email address is required.';
         }
         if (!addressLine1 || !addressLine1.trim()) {
-            res.status(400);
-            throw new Error('Address Line 1 is required.');
+            validationErrors.addressLine1 = 'Address Line 1 is required.';
         }
         if (!pincode || !/^\d{6}$/.test(pincode)) {
-            res.status(400);
-            throw new Error('Valid 6-digit pin code is required.');
+            validationErrors.pincode = 'Valid 6-digit pin code is required.';
+        }
+
+        if (Object.keys(validationErrors).length > 0) {
+            throw new AppError('Address validation failed.', 400, 'INVALID_PARAMETERS', validationErrors);
         }
 
         
@@ -160,8 +176,7 @@ export const createOrder = async (req, res, next) => {
         }).populate('items.product');
 
         if (!session) {
-            res.status(400);
-            throw new Error('Checkout session expired or invalid. Please re-initiate checkout.');
+            throw new AppError('Checkout session expired or invalid. Please re-initiate checkout.', 400, 'SESSION_EXPIRED');
         }
 
         
@@ -205,7 +220,6 @@ export const createOrder = async (req, res, next) => {
         });
 
         if (paymentMethod === 'cod') {
-            
             newOrder.orderStatus = 'PLACED';
             newOrder.paymentStatus = 'PENDING';
             await newOrder.save();
@@ -224,7 +238,6 @@ export const createOrder = async (req, res, next) => {
                 gatewayConfig: null
             });
         } else {
-            
             newOrder.orderStatus = 'PENDING_PAYMENT';
             newOrder.paymentStatus = 'PENDING';
 
@@ -261,19 +274,15 @@ export const verifyPayment = async (req, res, next) => {
     try {
         const order = await Order.findOne({ orderId });
         if (!order) {
-            res.status(404);
-            throw new Error(`Order ${orderId} not found.`);
+            throw new AppError(`Order ${orderId} not found.`, 404, 'ORDER_NOT_FOUND');
         }
 
         if (order.orderStatus !== 'PENDING_PAYMENT') {
-            res.status(400);
-            throw new Error(`Order ${orderId} is not in PENDING_PAYMENT status.`);
+            throw new AppError(`Order ${orderId} is not in PENDING_PAYMENT status.`, 400, 'INVALID_ORDER_STATE');
         }
 
-        
         let isSignatureValid = false;
 
-        
         if (razorpay_signature === 'mock_signature') {
             isSignatureValid = true;
         } else {
@@ -326,10 +335,12 @@ export const verifyPayment = async (req, res, next) => {
             
             const session = await CheckoutSession.findOne({
                 user: req.user._id,
-                status: 'ACTIVE'
+                status: 'ACTIVE',
+                stockReturned: false
             });
             if (session) {
                 session.status = 'EXPIRED';
+                session.stockReturned = true;
                 await session.save();
 
                 for (const item of session.items) {
@@ -339,13 +350,31 @@ export const verifyPayment = async (req, res, next) => {
                 }
             }
 
-            res.status(400).json({
-                success: false,
-                verified: false,
-                orderStatus: 'PAYMENT_FAILED',
-                message: 'Cryptographic signature mismatch. Authentication failed.'
-            });
+            throw new AppError('Cryptographic signature mismatch. Authentication failed.', 400, 'PAYMENT_VERIFICATION_FAILED');
         }
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getCustomerOrders = async (req, res, next) => {
+    try {
+        const orders = await Order.find({ customer: req.user._id }).sort({ createdAt: -1 }).lean();
+        res.json({
+            success: true,
+            orders: orders.map(order => ({
+                orderId: order.orderId,
+                status: order.orderStatus,
+                paymentStatus: order.paymentStatus,
+                date: order.createdAt.toISOString().split('T')[0],
+                total: Number((order.pricingSummary.total / 100).toFixed(2)),
+                items: order.items.map(item => ({
+                    title: item.title,
+                    quantity: item.quantity,
+                    price: Number((item.price / 100).toFixed(2))
+                }))
+            }))
+        });
     } catch (error) {
         next(error);
     }

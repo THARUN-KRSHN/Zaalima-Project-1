@@ -1,5 +1,7 @@
 import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
+import { AppError } from '../utils/AppError.js';
+import mongoose from 'mongoose';
 
 
 const formatCartResponse = (cart) => {
@@ -59,15 +61,27 @@ export const addToCart = async (req, res, next) => {
     const { productId, quantity = 1 } = req.body;
 
     try {
+        if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
+            throw new AppError('Valid product ID is required.', 400, 'INVALID_PARAMETERS', {
+                productId: 'Valid product identifier must be specified.'
+            });
+        }
+
+        if (isNaN(quantity) || Number(quantity) < 1) {
+            throw new AppError('Quantity must be a positive integer.', 400, 'INVALID_PARAMETERS', {
+                quantity: 'Quantity must be at least 1.'
+            });
+        }
+
         const product = await Product.findById(productId);
         if (!product) {
-            res.status(404);
-            throw new Error('Product not found.');
+            throw new AppError('Product not found.', 404, 'PRODUCT_NOT_FOUND');
         }
 
         if (product.stock < Number(quantity)) {
-            res.status(400);
-            throw new Error(`Insufficient inventory stock. Only ${product.stock} items remaining.`);
+            throw new AppError(`Insufficient inventory stock. Only ${product.stock} items remaining.`, 400, 'INSUFFICIENT_STOCK', {
+                quantity: `Only ${product.stock} items remaining.`
+            });
         }
 
         let cart = await Cart.findOne({ user: req.user._id });
@@ -75,17 +89,16 @@ export const addToCart = async (req, res, next) => {
             cart = new Cart({ user: req.user._id, items: [] });
         }
 
-        
         const existingItemIndex = cart.items.findIndex(
             (item) => item.product.toString() === productId
         );
 
         if (existingItemIndex > -1) {
-            
             const newQty = cart.items[existingItemIndex].quantity + Number(quantity);
             if (product.stock < newQty) {
-                res.status(400);
-                throw new Error(`Cannot add more items. Total requested quantity (${newQty}) exceeds stock.`);
+                throw new AppError(`Cannot add more items. Total requested quantity (${newQty}) exceeds stock.`, 400, 'INSUFFICIENT_STOCK', {
+                    quantity: `Cannot add more items. Total requested quantity (${newQty}) exceeds stock.`
+                });
             }
             cart.items[existingItemIndex].quantity = newQty;
         } else {
@@ -93,7 +106,6 @@ export const addToCart = async (req, res, next) => {
         }
 
         await cart.save();
-        
         
         const populatedCart = await Cart.findOne({ user: req.user._id }).populate('items.product');
         res.json({
@@ -113,34 +125,36 @@ export const updateCart = async (req, res, next) => {
     const { quantity } = req.body;
 
     try {
-        if (Number(quantity) < 1) {
-            res.status(400);
-            throw new Error('Quantity must be at least 1.');
+        if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
+            throw new AppError('Valid cart item ID is required.', 400, 'INVALID_PARAMETERS');
+        }
+
+        if (quantity === undefined || isNaN(quantity) || Number(quantity) < 1) {
+            throw new AppError('Quantity must be at least 1.', 400, 'INVALID_PARAMETERS', {
+                quantity: 'Quantity must be at least 1.'
+            });
         }
 
         const cart = await Cart.findOne({ user: req.user._id });
         if (!cart) {
-            res.status(404);
-            throw new Error('Cart not found.');
+            throw new AppError('Cart not found.', 404, 'CART_NOT_FOUND');
         }
 
         const itemIndex = cart.items.findIndex((item) => item._id.toString() === itemId);
         if (itemIndex === -1) {
-            res.status(404);
-            throw new Error('Cart item not found.');
+            throw new AppError('Cart item not found.', 404, 'ITEM_NOT_FOUND');
         }
 
-        
         const productId = cart.items[itemIndex].product;
         const product = await Product.findById(productId);
         if (!product) {
-            res.status(404);
-            throw new Error('Product associated with this cart item no longer exists.');
+            throw new AppError('Product associated with this cart item no longer exists.', 404, 'PRODUCT_NOT_FOUND');
         }
 
         if (product.stock < Number(quantity)) {
-            res.status(400);
-            throw new Error(`Insufficient inventory stock. Only ${product.stock} items remaining.`);
+            throw new AppError(`Insufficient inventory stock. Only ${product.stock} items remaining.`, 400, 'INSUFFICIENT_STOCK', {
+                quantity: `Only ${product.stock} items remaining.`
+            });
         }
 
         cart.items[itemIndex].quantity = Number(quantity);
@@ -163,16 +177,18 @@ export const removeFromCart = async (req, res, next) => {
     const { itemId } = req.params;
 
     try {
+        if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
+            throw new AppError('Valid cart item ID is required.', 400, 'INVALID_PARAMETERS');
+        }
+
         const cart = await Cart.findOne({ user: req.user._id });
         if (!cart) {
-            res.status(404);
-            throw new Error('Cart not found.');
+            throw new AppError('Cart not found.', 404, 'CART_NOT_FOUND');
         }
 
         const itemIndex = cart.items.findIndex((item) => item._id.toString() === itemId);
         if (itemIndex === -1) {
-            res.status(404);
-            throw new Error('Cart item not found.');
+            throw new AppError('Cart item not found.', 404, 'ITEM_NOT_FOUND');
         }
 
         cart.items.splice(itemIndex, 1);
