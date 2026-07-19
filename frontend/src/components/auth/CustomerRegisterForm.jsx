@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Lock, ArrowLeft, ArrowRight } from 'lucide-react';
+import { authService } from '../../services/authService';
 
 export default function CustomerRegisterForm() {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ export default function CustomerRegisterForm() {
         if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
     };
 
-    const handleFormSubmit = (e) => {
+    const handleFormSubmit = async (e) => {
         e.preventDefault();
         const newErrors = {};
         if (!formData.fullName.trim()) newErrors.fullName = "Full name required";
@@ -21,7 +22,19 @@ export default function CustomerRegisterForm() {
         if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
 
         if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
-        console.log("Dispatched customer registration request:", formData);
+        console.log("Dispatched customer registration request:", formData.email);
+
+        try {
+            await authService.registerCustomer({
+                fullName: formData.fullName,
+                email: formData.email,
+                phone: formData.phone || "9999999999",
+                password: formData.password
+            });
+        } catch (error) {
+            console.warn("API registration failed, completing with mock flow:", error.message);
+        }
+
         navigate('?auth=login');
     };
 

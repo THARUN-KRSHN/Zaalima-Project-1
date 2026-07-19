@@ -12,28 +12,14 @@ import CouponSection from '../../components/cart/CouponSection';
 import CartSummary from '../../components/cart/CartSummary';
 import EmptyCart from '../../components/cart/EmptyCart';
 
+// --- CENTRALIZED MOCK DATA ---
+import { cartItems as initialCartItems } from '../../data/cartData';
+
 export default function Cart() {
     const [loading, setLoading] = useState(true);
     const [isDarkMode, setIsDarkMode] = useState(false);
 
-    const [cartItems, setCartItems] = useState([
-        {
-            id: 1,
-            title: "Anarkali Kurta Set",
-            brand: "Zaalima Premium Hub",
-            price: 898,
-            quantity: 1,
-            image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&auto=format&fit=crop&q=80"
-        },
-        {
-            id: 2,
-            title: "Vyb Diva Wristwatch",
-            brand: "Fastrack",
-            price: 2046,
-            quantity: 1,
-            image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=300&auto=format&fit=crop&q=80"
-        }
-    ]);
+    const [cartItems, setCartItems] = useState(initialCartItems);
 
     const [couponDiscount, setCouponDiscount] = useState(0);
     const [toast, setToast] = useState({ isVisible: false, message: '', type: 'success' });
