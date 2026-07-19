@@ -8,6 +8,8 @@ Welcome to **ZMarket**, a multi-tenant e-commerce Software-as-a-Service (SaaS) m
 * **Project Name**: ZMarket
 * **Organization**: Zaalima Development
 * **Architecture**: Decoupled Client–Server Architecture (RESTful APIs)
+* **Live Storefront**: [https://zmarket-demo.vercel.app](https://zmarket-demo.vercel.app)
+* **Live API Engine**: [https://zaalima-project-1.onrender.com](https://zaalima-project-1.onrender.com)
 * **Frontend**: React 19 + Vite + Tailwind CSS + Redux Toolkit
 * **Backend**: Node.js + Express.js (ES Modules) + Mongoose (MongoDB)
 * **Authentication**: JSON Web Tokens (JWT) & HTTP-only Cookies
