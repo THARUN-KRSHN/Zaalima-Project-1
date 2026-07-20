@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Sparkles, ArrowRight, Store, ShoppingBag, Terminal,
@@ -6,21 +6,26 @@ import {
 } from 'lucide-react';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
+import { allProducts } from '../../data/products';
+import { getProducts } from '../../services/productService';
 
 export default function Home({ isDarkMode, onToggleTheme }) {
     const navigate = useNavigate();
+    const [productsList, setProductsList] = useState(allProducts);
 
-    // High-density commerce array mirroring production scale data metrics
-    const dynamicProducts = [
-        { id: 1, name: "Quantum Mechanical Keyboard v2", category: "Keyboards", price: "₹8,499", store: "Apex Digital Hub", rating: "4.9", badge: "Most Loved", graphic: "⌨️" },
-        { id: 2, name: "Premium Leather Birken Clogs", category: "Men's Sandals", price: "₹4,299", store: "Zaalima Boutiques", rating: "4.8", badge: "Top Seller", graphic: "👡" },
-        { id: 3, name: "Pro Wireless Dual-Sense Controller", category: "PC Gaming", price: "₹5,899", store: "Apex Digital Hub", rating: "4.7", badge: "New Collection", graphic: "🎮" },
-        { id: 4, name: "Minimalist Ergonomic Cargo Trouser", category: "Men's Trousers", price: "₹2,199", store: "Zaalima Boutiques", rating: "4.9", badge: "Best Picks", graphic: "👖" },
-        { id: 5, name: "Stainless Steel Thermal Flask 1L", category: "Popular Nearby", price: "₹1,899", store: "Milton Hub", rating: "4.6", badge: "Trending", graphic: "🍾" },
-        { id: 6, name: "Luxury Chrono Blue-Dial Watch", category: "Accessories", price: "₹12,499", store: "Chrono Classics", rating: "4.9", badge: "Premium Tier", graphic: "⌚" },
-        { id: 7, name: "Ergonomic Gel-Infused Mouse", category: "PC Gaming", price: "₹3,400", store: "Apex Digital Hub", rating: "4.8", badge: "Sale", graphic: "🖱️" },
-        { id: 8, name: "Premium Fine-Tip Executive Pens", category: "Popular Nearby", price: "₹799", store: "Hauser Shop", rating: "4.9", badge: "Bulk Best", graphic: "🖊️" },
-    ];
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const data = await getProducts();
+                if (data && data.success && data.products && data.products.length > 0) {
+                    setProductsList(data.products);
+                }
+            } catch (error) {
+                console.warn("Failed to fetch products for home page, utilizing local data source:", error.message);
+            }
+        };
+        fetchProducts();
+    }, []);
 
     const marqueeTexts = [
         "480+ VERIFIED MERCHANT NODES", "REAL-TIME PARCEL TRACKING ACTIVE",
@@ -101,24 +106,26 @@ export default function Home({ isDarkMode, onToggleTheme }) {
 
                 {/* Grid Deck */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-                    {dynamicProducts.slice(0, 4).map((product) => (
+                    {productsList.slice(0, 4).map((product) => (
                         <div
                             key={product.id}
-                            onClick={() => navigate('/products')}
+                            onClick={() => navigate(`/products/${product.id}`)}
                             className="bg-[var(--bg-surface)] border border-[var(--border-light)] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col group cursor-pointer"
                         >
-                            <div className="w-full aspect-square bg-stone-50 dark:bg-stone-900/40 flex items-center justify-center text-5xl relative overflow-hidden group-hover:scale-[1.01] transition-transform duration-300">
-                                <span className="absolute top-4 left-4 px-2.5 py-0.5 bg-[var(--primary)] text-[var(--text-on-primary)] rounded-md text-[9px] font-mono tracking-wider uppercase font-bold shadow-sm">{product.badge}</span>
-                                {product.graphic}
+                            <div className="w-full aspect-square bg-stone-50 dark:bg-stone-900/40 flex items-center justify-center relative overflow-hidden group-hover:scale-[1.01] transition-transform duration-300">
+                                {product.tag && (
+                                    <span className="absolute top-4 left-4 px-2.5 py-0.5 bg-[var(--primary)] text-[var(--text-on-primary)] rounded-md text-[9px] font-mono tracking-wider uppercase font-bold shadow-sm z-10">{product.tag}</span>
+                                )}
+                                <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300" />
                             </div>
                             <div className="p-5 flex flex-col justify-between flex-grow gap-2">
-                                <div className="flex flex-col gap-0.5">
-                                    <span className="text-[10px] font-bold text-[var(--text-muted)] tracking-wider font-mono uppercase">{product.store}</span>
-                                    <h4 className="text-sm font-extrabold text-stone-950 dark:text-white tracking-tight line-clamp-1 group-hover:text-[var(--primary)] transition-colors">{product.name}</h4>
+                                <div className="flex flex-col gap-0.5 text-left">
+                                    <span className="text-[10px] font-bold text-[var(--text-muted)] tracking-wider font-mono uppercase">{product.brand}</span>
+                                    <h4 className="text-sm font-extrabold text-stone-950 dark:text-white tracking-tight line-clamp-1 group-hover:text-[var(--primary)] transition-colors">{product.title}</h4>
                                 </div>
                                 <div className="flex items-center justify-between pt-2 border-t border-[var(--border-light)] mt-1">
-                                    <span className="font-bold text-stone-900 dark:text-white font-mono text-sm">{product.price}</span>
-                                    <span className="text-[10px] font-bold text-[var(--text-muted)] font-mono">★ {product.rating}</span>
+                                    <span className="font-bold text-stone-900 dark:text-white font-mono text-sm">₹{product.price?.toLocaleString()}</span>
+                                    <span className="text-[10px] font-bold text-[var(--text-muted)] font-mono">★ {product.rating || '4.5'}</span>
                                 </div>
                             </div>
                         </div>
@@ -179,26 +186,26 @@ export default function Home({ isDarkMode, onToggleTheme }) {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-                    {dynamicProducts.map((product) => (
+                    {productsList.map((product) => (
                         <div
                             key={product.id}
-                            onClick={() => navigate('/products')}
+                            onClick={() => navigate(`/products/${product.id}`)}
                             className="bg-[var(--bg-surface)] border border-[var(--border-light)] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-150 flex flex-col group cursor-pointer"
                         >
-                            <div className="w-full aspect-[4/3] bg-stone-50 dark:bg-stone-900/20 flex items-center justify-center text-4xl group-hover:scale-[1.01] transition-transform duration-200">
-                                {product.graphic}
+                            <div className="w-full aspect-[4/3] bg-stone-50 dark:bg-stone-900/20 flex items-center justify-center group-hover:scale-[1.01] transition-transform duration-200 overflow-hidden">
+                                <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200" />
                             </div>
                             <div className="p-4 flex flex-col gap-2 justify-between flex-grow">
-                                <div className="flex flex-col gap-0.5">
+                                <div className="flex flex-col gap-0.5 text-left">
                                     <div className="flex items-center justify-between w-full text-[9px] font-mono uppercase font-bold tracking-wide text-[var(--text-muted)]">
-                                        <span>{product.store}</span>
+                                        <span>{product.brand}</span>
                                         <span className="text-[var(--primary)]">{product.category}</span>
                                     </div>
-                                    <h4 className="text-xs sm:text-sm font-extrabold text-stone-950 dark:text-white tracking-tight line-clamp-1 mt-0.5 group-hover:text-[var(--primary)] transition-colors">{product.name}</h4>
+                                    <h4 className="text-xs sm:text-sm font-extrabold text-stone-950 dark:text-white tracking-tight line-clamp-1 mt-0.5 group-hover:text-[var(--primary)] transition-colors">{product.title}</h4>
                                 </div>
-                                <div className="flex items-center justify-between pt-2 border-t border-[var(--border-light)] mt-1">
-                                    <span className="font-bold text-stone-900 dark:text-white font-mono">{product.price}</span>
-                                    <span className="text-[10px] font-bold text-[var(--primary)] hover:underline">View Data</span>
+                                <div className="flex items-center justify-between pt-2 border-t border-[var(--border-light)] mt-1 font-sans">
+                                    <span className="font-bold text-stone-900 dark:text-white font-mono">₹{product.price?.toLocaleString()}</span>
+                                    <span className="text-[10px] font-bold text-[var(--text-muted)] font-mono">★ {product.rating || '4.5'}</span>
                                 </div>
                             </div>
                         </div>

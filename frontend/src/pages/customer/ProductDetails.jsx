@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ShoppingCart, ShoppingBag, ArrowLeft } from 'lucide-react';
 
 // --- PLATFORM INTERIOR LAYOUTS ---
@@ -15,29 +15,20 @@ import QuantitySelector from '../../components/product/QuantitySelector';
 import VendorInfo from '../../components/product/VendorInfo';
 import SimilarProducts from '../../components/product/SimilarProducts';
 
+// --- CENTRALIZED MOCK DATA ---
+import { getProductDetailsById } from '../../data/productDetails';
+import { getProductsByCategory } from '../../data/products';
+import { getProductById, getSimilarProducts } from '../../services/productService';
+
 export default function ProductDetails() {
+    const { id } = useParams();
     const [loading, setLoading] = useState(true);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [qty, setQty] = useState(1);
     const navigate = useNavigate();
 
-    const mockProductData = {
-        title: "Anarkali Kurta Set",
-        category: "Fashion",
-        price: 898,
-        description: "An elegant handwoven Viscose Rayon Anarkali Kurta set. Includes matching Palazzo pants and a beautiful embellished dupatta. Made from premium, soft, and breathable fabric designed for comfort and everyday style.",
-        inStock: true,
-        images: [
-            "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&auto=format&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&auto=format&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600&auto=format&fit=crop&q=80"
-        ],
-        vendor: {
-            storeName: "Zaalima Premium Hub",
-            name: "Tharun Krishna",
-            rating: 4.9
-        }
-    };
+    const [product, setProduct] = useState(() => getProductDetailsById(id));
+    const [similarProducts, setSimilarProducts] = useState([]);
 
     const handleAddToCart = () => {
         navigate("/cart");
@@ -48,9 +39,51 @@ export default function ProductDetails() {
     };
 
     useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 1000);
-        return () => clearTimeout(timer);
-    }, []);
+        window.scrollTo(0, 0);
+        const fetchProductData = async () => {
+            setLoading(true);
+            let activeProduct = null;
+            try {
+                const data = await getProductById(id);
+                if (data && data.success && data.product) {
+                    activeProduct = data.product;
+                    setProduct(data.product);
+                    
+                    try {
+                        const simData = await getSimilarProducts(id);
+                        if (simData && simData.success && simData.products) {
+                            setSimilarProducts(simData.products);
+                        } else {
+                            setSimilarProducts([]);
+                        }
+                    } catch {
+                        const simList = getProductsByCategory(data.product.category)
+                            .filter((p) => p.id !== data.product.id)
+                            .slice(0, 4);
+                        setSimilarProducts(simList);
+                    }
+                } else {
+                    activeProduct = getProductDetailsById(id);
+                    setProduct(activeProduct);
+                    const simList = getProductsByCategory(activeProduct.category)
+                        .filter((p) => p.id !== activeProduct.id)
+                        .slice(0, 4);
+                    setSimilarProducts(simList);
+                }
+            } catch (error) {
+                console.warn(`Failed to fetch product details for ID ${id}, using fallback:`, error.message);
+                activeProduct = getProductDetailsById(id);
+                setProduct(activeProduct);
+                const simList = getProductsByCategory(activeProduct.category)
+                    .filter((p) => p.id !== activeProduct.id)
+                    .slice(0, 4);
+                setSimilarProducts(simList);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProductData();
+    }, [id]);
 
     return (
         <div className={`${isDarkMode ? 'dark' : ''} min-h-screen w-full bg-[var(--bg-main)] flex flex-col justify-between transition-colors duration-300`}>
@@ -78,11 +111,11 @@ export default function ProductDetails() {
 
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-start h-auto w-full relative">
                             <div className="w-full md:col-span-6 lg:col-span-5 xl:col-span-5 md:sticky md:top-24 max-h-[85vh] overflow-visible z-10">
-                                <ProductGallery images={mockProductData.images} />
+                                <ProductGallery images={product.images || []} />
                             </div>
 
                             <div className="w-full md:col-span-6 lg:col-span-7 xl:col-span-7 flex flex-col gap-6 border border-[var(--border-light)] bg-[var(--bg-surface)] rounded-2xl p-5 sm:p-8 shadow-sm transition-colors duration-300">
-                                <ProductInfo product={mockProductData} />
+                                <ProductInfo product={product} />
                                 <QuantitySelector quantity={qty} onQuantityChange={setQty} />
 
                                 <div className="flex flex-col sm:flex-row gap-3 w-full pt-2 border-t border-[var(--border-light)]">
@@ -106,21 +139,29 @@ export default function ProductDetails() {
                                 <div className="text-xs sm:text-sm text-[var(--text-muted)] font-normal border-t border-[var(--border-light)] pt-4 flex flex-col gap-3">
                                     <p className="font-semibold text-[var(--text-main)] tracking-wider text-xs">Product Highlights</p>
                                     <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-xs sm:text-sm">
-                                        <li>Premium handloomed fabric that is soft and breathable.</li>
-                                        <li>Pre-shrunk for a perfect long-lasting fit.</li>
-                                        <li>Ethically sourced directly from local weavers.</li>
-                                        <li>Comfortable inner lining, perfect for all-day wear.</li>
+                                        {product.highlights && product.highlights.length > 0 ? (
+                                            product.highlights.map((highlight, index) => (
+                                                <li key={index}>{highlight}</li>
+                                            ))
+                                        ) : (
+                                            <>
+                                                <li>Premium handloomed fabric that is soft and breathable.</li>
+                                                <li>Pre-shrunk for a perfect long-lasting fit.</li>
+                                                <li>Ethically sourced directly from local weavers.</li>
+                                                <li>Comfortable inner lining, perfect for all-day wear.</li>
+                                            </>
+                                        )}
                                     </ul>
                                 </div>
 
                                 <div className="mt-2 pt-4 border-t border-[var(--border-light)]">
-                                    <VendorInfo vendor={mockProductData.vendor} />
+                                    <VendorInfo vendor={product.vendor || {}} />
                                 </div>
                             </div>
                         </div>
 
                         <div className="w-full">
-                            <SimilarProducts />
+                            <SimilarProducts products={similarProducts} />
                         </div>
                     </>
                 )}

@@ -14,6 +14,7 @@ import Loader from '../../components/common/Loader';
 
 // --- CENTRALIZED MOCK DATA ---
 import { allProducts } from '../../data/products';
+import { getProducts } from '../../services/productService';
 
 export default function ProductListing() {
     const [loading, setLoading] = useState(true);
@@ -21,18 +22,20 @@ export default function ProductListing() {
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const [productsList, setProductsList] = useState([]);
 
     const [currentPage, setCurrentPage] = useState(0);
-    const itemsPerPage = 4;
 
-
-
-    const filteredProducts = allProducts.filter((product) => {
+    const filteredProducts = productsList.filter((product) => {
         const matchesCategory = activeCategory === 'All' || product.category.toLowerCase() === activeCategory.toLowerCase();
         const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             product.brand.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
     });
+
+    // If product count is greater than 20, paginate with 20 items per page; otherwise show all
+    const usesPagination = filteredProducts.length > 20;
+    const itemsPerPage = usesPagination ? 20 : Math.max(1, filteredProducts.length);
 
     const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
     const startIndex = currentPage * itemsPerPage;
@@ -49,8 +52,23 @@ export default function ProductListing() {
     };
 
     useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 1000);
-        return () => clearTimeout(timer);
+        const fetchProducts = async () => {
+            setLoading(true);
+            try {
+                const data = await getProducts();
+                if (data && data.success && data.products && data.products.length > 0) {
+                    setProductsList(data.products);
+                } else {
+                    setProductsList(allProducts);
+                }
+            } catch (error) {
+                console.warn("Failed to fetch products from backend, falling back to mock catalog:", error.message);
+                setProductsList(allProducts);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
     }, []);
 
     return (

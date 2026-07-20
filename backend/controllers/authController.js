@@ -2,16 +2,15 @@ import User from '../models/User.js';
 import Store from '../models/Store.js';
 import Cart from '../models/Cart.js';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { AppError } from '../utils/AppError.js';
 
 
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d'
+const generateToken = (id, role) => {
+    return jwt.sign({ id, role }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN || '30d'
     });
 };
-
-
 
 
 export const registerCustomer = async (req, res, next) => {
@@ -51,21 +50,23 @@ export const registerCustomer = async (req, res, next) => {
             role: 'customer'
         });
 
-        
         await Cart.create({ user: user._id, items: [] });
 
-        const token = generateToken(user._id);
+        const token = generateToken(user._id, user.role);
 
         res.status(201).json({
             success: true,
+            message: 'Registration successful.',
+            token,
             user: {
                 id: user._id,
                 fullName: user.fullName,
+                name: user.fullName,
                 email: user.email,
                 role: user.role,
-                phone: user.phone
-            },
-            token
+                phone: user.phone,
+                avatar: user.avatar
+            }
         });
     } catch (error) {
         next(error);
@@ -73,10 +74,8 @@ export const registerCustomer = async (req, res, next) => {
 };
 
 
-
-
 export const registerVendor = async (req, res, next) => {
-    const { storeName, ownerName, email, gstNumber, storeAddress, password } = req.body;
+    const { storeName, ownerName, email, gstNumber, storeAddress, password, phone } = req.body;
 
     try {
         const validationErrors = {};
@@ -95,10 +94,6 @@ export const registerVendor = async (req, res, next) => {
         if (!password || password.length < 6) {
             validationErrors.password = 'Password is required (minimum 6 characters).';
         }
-        if (gstNumber && !/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/.test(gstNumber.toUpperCase())) {
-            
-            
-        }
 
         if (Object.keys(validationErrors).length > 0) {
             throw new AppError('Validation failed.', 400, 'INVALID_PARAMETERS', validationErrors);
@@ -115,6 +110,7 @@ export const registerVendor = async (req, res, next) => {
             fullName: ownerName,
             email,
             password,
+            phone,
             role: 'vendor'
         });
 
@@ -130,25 +126,25 @@ export const registerVendor = async (req, res, next) => {
         user.vendorStore = store._id;
         await user.save();
 
-        const token = generateToken(user._id);
+        const token = generateToken(user._id, user.role);
 
         res.status(201).json({
             success: true,
+            message: 'Vendor registration successful. Awaiting approval.',
+            token,
             user: {
                 id: user._id,
                 fullName: user.fullName,
+                name: user.fullName,
                 email: user.email,
                 role: user.role,
                 vendorStore: store._id
-            },
-            token
+            }
         });
     } catch (error) {
         next(error);
     }
 };
-
-
 
 
 export const login = async (req, res, next) => {
@@ -163,21 +159,26 @@ export const login = async (req, res, next) => {
             throw new AppError('Validation failed.', 400, 'INVALID_PARAMETERS', validationErrors);
         }
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).populate('vendorStore');
 
         if (user && (await user.matchPassword(password))) {
-            const token = generateToken(user._id);
+            const token = generateToken(user._id, user.role);
 
             res.json({
                 success: true,
+                message: 'Login successful.',
+                token,
                 user: {
                     id: user._id,
+                    _id: user._id,
                     fullName: user.fullName,
+                    name: user.fullName,
                     email: user.email,
                     role: user.role,
+                    phone: user.phone,
+                    avatar: user.avatar,
                     vendorStore: user.vendorStore || null
-                },
-                token
+                }
             });
         } else {
             throw new AppError('Invalid email or password credentials provided.', 401, 'INVALID_CREDENTIALS');
@@ -188,6 +189,47 @@ export const login = async (req, res, next) => {
 };
 
 
+export const logout = async (req, res) => {
+    // JWT is stateless — client should discard the token.
+    res.json({
+        success: true,
+        message: 'Logged out successfully.'
+    });
+};
+
+
+export const getMe = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id)
+            .select('-password -resetPasswordToken -resetPasswordExpires')
+            .populate('vendorStore');
+
+        if (!user) {
+            throw new AppError('User not found.', 404, 'USER_NOT_FOUND');
+        }
+
+        res.json({
+            success: true,
+            user: {
+                id: user._id,
+                _id: user._id,
+                fullName: user.fullName,
+                name: user.fullName,
+                email: user.email,
+                role: user.role,
+                phone: user.phone,
+                avatar: user.avatar,
+                wishlist: user.wishlist,
+                addresses: user.addresses,
+                isVerified: user.isVerified,
+                vendorStore: user.vendorStore || null,
+                createdAt: user.createdAt
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 
 
 export const forgotPassword = async (req, res, next) => {
@@ -202,14 +244,63 @@ export const forgotPassword = async (req, res, next) => {
 
         const user = await User.findOne({ email });
         if (!user) {
-            throw new AppError('No account found with this email address.', 404, 'USER_NOT_FOUND', {
-                email: 'No account registered with this email address.'
+            // Don't reveal if user exists — return success anyway for security
+            return res.json({
+                success: true,
+                message: 'If that email is registered, a password reset link has been sent.'
             });
         }
 
+        // Generate reset token
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+        user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+        await user.save({ validateBeforeSave: false });
+
         res.json({
             success: true,
-            message: 'Password reset link dispatched. Please check your inbox matching this address.'
+            message: 'If that email is registered, a password reset link has been sent.',
+            // In development, expose token for testing
+            ...(process.env.NODE_ENV === 'development' && { resetToken })
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+export const resetPassword = async (req, res, next) => {
+    const { token, password } = req.body;
+
+    try {
+        if (!token) {
+            throw new AppError('Reset token is required.', 400, 'INVALID_PARAMETERS');
+        }
+        if (!password || password.length < 6) {
+            throw new AppError('Password must be at least 6 characters.', 400, 'INVALID_PARAMETERS', {
+                password: 'Password must be at least 6 characters.'
+            });
+        }
+
+        const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+        const user = await User.findOne({
+            resetPasswordToken: hashedToken,
+            resetPasswordExpires: { $gt: new Date() }
+        });
+
+        if (!user) {
+            throw new AppError('Invalid or expired reset token.', 400, 'INVALID_TOKEN');
+        }
+
+        user.password = password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+        res.json({
+            success: true,
+            message: 'Password reset successful. You can now log in with your new password.'
         });
     } catch (error) {
         next(error);

@@ -1,4 +1,4 @@
-import React from 'react';
+import { categories as dataCategories } from '../../data/products';
 
 /**
  * @param {string} activeCategory - The currently selected category string state from parent
@@ -6,12 +6,13 @@ import React from 'react';
  */
 export default function CategoryFilter({ activeCategory = 'All', onCategoryChange }) {
 
-    // Explicitly mapping your required Zmarket marketplace categories
+    // Dynamically mapping Zmarket marketplace categories from products data
     const categories = [
         { id: 'all', label: 'All' },
-        { id: 'electronics', label: 'Electronics' },
-        { id: 'fashion', label: 'Fashion' },
-        { id: 'books', label: 'Books' }
+        ...dataCategories.map(cat => ({
+            id: cat.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-'),
+            label: cat
+        }))
     ];
 
     return (

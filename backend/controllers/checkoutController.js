@@ -364,10 +364,19 @@ export const getCustomerOrders = async (req, res, next) => {
             success: true,
             orders: orders.map(order => ({
                 orderId: order.orderId,
+                id: order.orderId,
+                orderStatus: order.orderStatus,
                 status: order.orderStatus,
                 paymentStatus: order.paymentStatus,
+                paymentMethod: order.paymentMethod,
                 date: order.createdAt.toISOString().split('T')[0],
+                createdAt: order.createdAt,
+                subtotal: Number((order.pricingSummary.subtotal / 100).toFixed(2)),
+                tax: Number((order.pricingSummary.tax / 100).toFixed(2)),
+                shipping: Number((order.pricingSummary.shipping / 100).toFixed(2)),
+                discount: Number((order.pricingSummary.discount / 100).toFixed(2)),
                 total: Number((order.pricingSummary.total / 100).toFixed(2)),
+                shippingAddress: order.shippingAddress,
                 items: order.items.map(item => ({
                     title: item.title,
                     quantity: item.quantity,
@@ -379,3 +388,89 @@ export const getCustomerOrders = async (req, res, next) => {
         next(error);
     }
 };
+
+
+export const getCustomerOrderById = async (req, res, next) => {
+    try {
+        const order = await Order.findOne({
+            orderId: req.params.orderId,
+            customer: req.user._id
+        }).lean();
+
+        if (!order) {
+            const err = new Error('Order not found.');
+            err.statusCode = 404;
+            throw err;
+        }
+
+        res.json({
+            success: true,
+            order: {
+                orderId: order.orderId,
+                id: order.orderId,
+                orderStatus: order.orderStatus,
+                status: order.orderStatus,
+                paymentStatus: order.paymentStatus,
+                paymentMethod: order.paymentMethod,
+                date: order.createdAt.toISOString().split('T')[0],
+                createdAt: order.createdAt,
+                shippingAddress: order.shippingAddress,
+                subtotal: Number((order.pricingSummary.subtotal / 100).toFixed(2)),
+                tax: Number((order.pricingSummary.tax / 100).toFixed(2)),
+                shipping: Number((order.pricingSummary.shipping / 100).toFixed(2)),
+                discount: Number((order.pricingSummary.discount / 100).toFixed(2)),
+                total: Number((order.pricingSummary.total / 100).toFixed(2)),
+                items: order.items.map(item => ({
+                    title: item.title,
+                    quantity: item.quantity,
+                    price: Number((item.price / 100).toFixed(2))
+                })),
+                gatewayConfig: order.gatewayConfig
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+export const cancelCustomerOrder = async (req, res, next) => {
+    try {
+        const order = await Order.findOne({
+            orderId: req.params.orderId,
+            customer: req.user._id
+        });
+
+        if (!order) {
+            const err = new Error('Order not found.');
+            err.statusCode = 404;
+            throw err;
+        }
+
+        const cancellableStatuses = ['PENDING_PAYMENT', 'PLACED', 'PROCESSING'];
+        if (!cancellableStatuses.includes(order.orderStatus)) {
+            const err = new Error(`Order cannot be cancelled. Current status: ${order.orderStatus}`);
+            err.statusCode = 400;
+            throw err;
+        }
+
+        order.orderStatus = 'CANCELLED';
+
+        // Return stock
+        for (const item of order.items) {
+            await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+        }
+
+        await order.save();
+
+        res.json({
+            success: true,
+            message: 'Order cancelled successfully.',
+            orderId: order.orderId,
+            orderStatus: 'CANCELLED'
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+

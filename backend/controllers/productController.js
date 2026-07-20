@@ -19,7 +19,10 @@ const escapeRegExp = (string) => {
 
 
 export const getProducts = async (req, res, next) => {
-    const { category, search, page = 1, limit = 12 } = req.query;
+    const {
+        category, search, page = 1, limit = 12,
+        brand, minPrice, maxPrice, rating, sort
+    } = req.query;
 
     try {
         const query = {};
@@ -27,6 +30,11 @@ export const getProducts = async (req, res, next) => {
         if (category && category.toLowerCase() !== 'all') {
             const escapedCategory = escapeRegExp(category);
             query.category = { $regex: new RegExp(`^${escapedCategory}$`, 'i') };
+        }
+
+        if (brand) {
+            const escapedBrand = escapeRegExp(brand);
+            query.brand = { $regex: new RegExp(`^${escapedBrand}$`, 'i') };
         }
 
         if (search) {
@@ -38,13 +46,42 @@ export const getProducts = async (req, res, next) => {
             ];
         }
 
+        // Price range filter (frontend sends in rupees, DB stores in paise)
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) query.price.$gte = Math.round(Number(minPrice) * 100);
+            if (maxPrice) query.price.$lte = Math.round(Number(maxPrice) * 100);
+        }
+
+        // Minimum rating filter
+        if (rating) {
+            query.rating = { $gte: Number(rating) };
+        }
+
+        // Sorting
+        let sortOption = { createdAt: -1 };
+        if (sort === 'price-asc') sortOption = { price: 1 };
+        else if (sort === 'price-desc') sortOption = { price: -1 };
+        else if (sort === 'rating') sortOption = { rating: -1 };
+        else if (sort === 'newest') sortOption = { createdAt: -1 };
+        else if (sort === 'popular') sortOption = { reviewCount: -1 };
+
         const skip = (Number(page) - 1) * Number(limit);
         const total = await Product.countDocuments(query);
-        const products = await Product.find(query).skip(skip).limit(Number(limit));
+        const products = await Product.find(query)
+            .sort(sortOption)
+            .skip(skip)
+            .limit(Number(limit));
 
         res.json({
             success: true,
             products: products.map(mapProductToFrontend),
+            pagination: {
+                page: Number(page),
+                totalPages: Math.ceil(total / Number(limit)),
+                totalItems: total
+            },
+            // Keep legacy format for backward compat
             metaData: {
                 totalRecords: total,
                 currentPage: Number(page),
@@ -55,6 +92,8 @@ export const getProducts = async (req, res, next) => {
         next(error);
     }
 };
+
+
 
 
 
